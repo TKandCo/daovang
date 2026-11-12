@@ -28,8 +28,8 @@ Không ghi mật khẩu, khóa API, số tài khoản, thông tin khách hàng v
 ## Từng bảng (cột chính)
 | Bảng | Dùng để | Cột cần chú ý |
 |---|---|---|
-| `source` | Danh sách nguồn | `type`: paid_tool / google_trends / platform_public / affiliate / manual / bao_chi_dan_metric / noi_bo…; `license_note`: có được phép dùng không; `export_method`: chep_tay / xuat_file / api |
-| `product` | Một sản phẩm "khái niệm" (không phải link shop) | `regulated_flag` (CO/KHONG — ngành có điều kiện), `ip_risk_flag` (CO/KHONG — nghi nhái), `model`: nhap / affiliate / dropship / ca_hai |
+| `source` | Danh sách nguồn | `type` (chỉ dùng): paid_tool / google_trends / platform_public / affiliate / manual / bao_chi_dan_metric / metric_cong_khai / metric_ereport / san_tu_cong_bo / blog_ban_hang / noi_bo; `export_method`: chep_tay / xem_tay / xuat_file / api / doc_tep / nhap_tay; `url`: link, hoặc đường dẫn tệp trong repo (vd `bao-cao/dot0/p8-phap-ly.md`) cho nguồn nội bộ; `license_note`: có được phép dùng không |
+| `product` | Một sản phẩm "khái niệm" (không phải link shop) | `regulated_flag` (CO/KHONG — ngành có điều kiện), `ip_risk_flag` (CO/KHONG — nghi nhái), `model`: nhap / affiliate / dropship / ca_hai (script chặn giá trị khác) |
 | `supplier` | Nhà cung cấp | `type`: cho_si / nha_phan_phoi / forwarder_1688 / dropship; `docs_available`: có hóa đơn CO/KHONG; `public_contact_note`: chỉ kênh công khai của doanh nghiệp, không ghi tài khoản/mật khẩu |
 | `supplier_quote` | Báo giá | `unit_cost_vnd`, `ship_cost_per_unit_vnd`, `quoted_at`, `valid_until` |
 | `listing_price` | Giá bán đối thủ (xem tay) | `shop_ref`: tên shop công khai; `sold_est_30d`: số ước tính từ công cụ — ghi rõ nguồn |
@@ -67,6 +67,8 @@ Nhóm chưa có sản phẩm / báo giá cụ thể nên chỉ chấm được 3
   cộng số riêng của nhóm: ≤ 12 tháng **+4** / cũ hơn hoặc chỉ tiêu đề **+2** / không có **0**.
 - Pháp lý cấp nhóm: ngoài nhóm có điều kiện theo P8 **10** (chưa 15 vì chưa kiểm hóa đơn / nhãn / nhái từng sản phẩm); còn vướng quy định CHƯA XÁC MINH **6**.
 - Video: đánh giá chủ quan của P1 (nguồn `S21`, độ tin cậy THẤP).
+- Độ tin cậy của nhóm = mức **thấp nhất** trong các nguồn dữ liệu của nhóm (không tính nguồn nội bộ `noi_bo`); nhóm chỉ có nguồn nội bộ thì `CHUA_XAC_MINH` và điểm nhu cầu phải là 0.
+- Script chặn: `demand` cấp nhóm > 10, `legal` khác 6 / 10, `fee_ref` trống, `mo_hinh` lạ, ngày không có thật, `do_tin_cay` cao hơn nguồn.
 Điểm sơ bộ chỉ để XẾP THỨ TỰ nhóm nào đáng tìm sản phẩm trước — không phải điểm quyết định nhập.
 
 ## Kiểm trước khi gửi
