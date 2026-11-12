@@ -34,7 +34,7 @@ Cách chấm từng phần: `apps/radar/README.md` mục "Điểm sơ bộ cấp
 | # | Nhóm | Tín hiệu (nguồn) | Tin cậy | Điểm /45 |
 |---|---|---|---|---|
 | N14 | Trang phục Tết (áo dài cách tân) — ưu tiên affiliate | thời trang lớn (S02, S05); ~2 triệu đơn áo dài TikTok 01/2026 (S01, S27) | THẤP | 28 |
-| N18 | Phụ kiện thú cưng (không thức ăn / thuốc) | thú cưng Q3/2026 ~1.921,5 tỷ (báo khác ghi tròn 1.912), +38,2% (S06, S08, S09); phụ kiện 481,1 tỷ (S07) | TB | 28 |
+| N18 | Phụ kiện thú cưng (không thức ăn / thuốc) | thú cưng Q3/2026 ~1.921,5 tỷ (báo khác ghi tròn 1.912), +38,2% (S06, S08, S09); phụ kiện 481,1 tỷ (S07) | THẤP | 28 |
 | N01 | Hộp / khay / thùng nhựa sắp xếp (không đựng thực phẩm) | NC-ĐS Q1 +32,17% (S03); TikTok NC-ĐS +94% năm 2025 (S10); eReport cũ (S11) | THẤP | 26 |
 | N02 | Móc treo, kệ dán, tấm tôn lỗ | NC-ĐS; eReport > 1 tỷ, +12,55% so quý trước (S12) | THẤP | 26 |
 | N03 | Giá treo chậu cây, phụ kiện ban công | NC-ĐS; eReport chỉ tiêu đề (S13) | CHƯA XÁC MINH | 24 |
@@ -45,7 +45,7 @@ Cách chấm từng phần: `apps/radar/README.md` mục "Điểm sơ bộ cấp
 | N10 | Túi vải / túi ví không thương hiệu | phụ kiện thời trang +56,95% H1 (S04); một thương hiệu +~200% (S17) | THẤP | 22 |
 | N11 | Balo phổ thông | eReport số 12/2024–11/2025 (S14); S04 | THẤP | 22 |
 | N13 | Đồ mặc nhà, áo thun cơ bản | thời trang lớn (S02, S05) | THẤP | 22 |
-| N19 | Đồ vệ sinh thú cưng không hóa chất | ngành thú cưng (S06, S08) | TB | 22 |
+| N19 | Đồ vệ sinh thú cưng không hóa chất | ngành thú cưng (S06, S08) | THẤP | 22 |
 | N08 | Phụ kiện tóc, thắt lưng | phụ kiện thời trang +56,95% (S04, 1 nguồn) | THẤP | 20 |
 | N09 | Trang sức thời trang | S04 | THẤP | 20 |
 | N12 | Tất / vớ | thời trang lớn (S02, S05) | THẤP | 20 |
@@ -112,7 +112,7 @@ python3 -m unittest apps/radar/test_kiem_tra.py
 |---|---|
 | Đúng yêu cầu (25%) | 8,5 |
 | Bằng chứng & nguồn (25%) | 6,5 (đã đối chiếu lại các số KTS hỏi; phần lớn vẫn chỉ qua trích đoạn) |
-| Độ tin cậy kỹ thuật (20%) | 7,5 (script + 21 kiểm thử đạt; vẫn chỉ kiểm định dạng, không kiểm nội dung) |
+| Độ tin cậy kỹ thuật (20%) | 7,5 (script + 24 kiểm thử đạt; vẫn chỉ kiểm định dạng, không kiểm nội dung) |
 | Chi phí & thời gian (15%) | 9 (0 đ) |
 | Rủi ro & tuân thủ (15%) | 8,5 |
 | **Tổng** | **≈ 7,9** (vòng 1 tự chấm 7,9; KTS chấm vòng 2 ≈ 7,6 — xem `p1-bien-ban-audit-kts-v2.md`) |
@@ -125,14 +125,15 @@ Biên bản KTS chép nguyên văn: `bao-cao/dot0/p1-bien-ban-audit-kts-v2.md` (
 
 | # | KTS yêu cầu | P1 đã làm |
 |---|---|---|
-| 1 | Số thú cưng 1.921,5 hay 1.912,5; số shop −9% | Tra lại: 1.921,5 tỷ +38,2% được nhiều báo ghi, một số báo ghi tròn 1.912 tỷ "hơn 38%" → ghi cả hai (S06, N18). Số shop thú cưng −9% còn 20.700 chỉ có 1 nguồn → ghi [THẤP] (S08, ghi chú N18). Số −10,68% KTS thấy là số gian hàng TOÀN thị trường, khác chỉ số |
-| 2 | "~2 triệu đơn áo dài" không tìm thấy | Tra lại: nhiều báo cùng ghi (MotTheGioi, Giao Thương – Công Thương, CafeBiz) → thêm S27, **giữ** +4 điểm N14 |
-| 3 | S25 FastMoss hạ [THẤP], URL | Đã hạ [THẤP]; S25 = blog FastMoss so sánh EchoTik, S26 = blog FastMoss về giá Kalodata (hai URL khác nhau) |
+| 1 | Số thú cưng 1.921,5 hay 1.912,5; số shop −9% | Tra lại: 1.921,5 tỷ +38,2% được nhiều báo ghi, một số báo ghi tròn 1.912 tỷ "hơn 38%" → ghi cả hai (S06, N18). Số shop thú cưng −9% còn 20.700 chỉ có 1 nguồn → ghi [THẤP] (S08 hạ cả dòng xuống [THẤP] sau khi KTS kiểm lại; ghi chú N18). Số −10,68% KTS thấy là số gian hàng TOÀN thị trường, khác chỉ số |
+| 2 | "~2 triệu đơn áo dài" không tìm thấy | Tra lại: nhiều báo cùng ghi (MotTheGioi, Giao Thương – Công Thương, CafeBiz) → thêm S27, **giữ** +4 điểm N14. KTS kiểm lại: có bài ghi mốc "2 triệu đơn" cho 1/2025 → S27 [THẤP] + ghi chú nguy cơ nhầm năm ở N14 |
+| 3 | S25 FastMoss hạ [THẤP], URL | Đã hạ [THẤP]. **Đính chính:** lần sửa đầu, URL S25 KHÔNG đổi được (lệnh thay thế không khớp) mà báo cáo lại ghi "hai URL khác nhau" — KTS kiểm lại phát hiện. Đã sửa thật: S25 = blog FastMoss so sánh EchoTik, S26 = blog FastMoss về giá Kalodata |
 | 4 | S03 URL; S19–S21 trỏ nhánh tạm | S03 đã đọc trang gốc metric.vn, khớp → nâng [CAO], giữ URL. S19–S21 đổi sang đường dẫn tệp trong repo (script kiểm tệp có thật) |
-| 5 | Vá 7 lỗ hổng script + kiểm danh sách type / export_method, độ tin cậy nhóm | Đã vá cả 7 lỗ hổng + 3 kiểm thêm; 21 kiểm thử (thêm 10) → OK. Áp quy tắc "độ tin cậy nhóm ≤ nguồn yếu nhất": 7 nhóm hạ từ [TB] xuống [THẤP] (N01, N05, N06, N07, N12, N13, N14), N03 hạ xuống CHƯA XÁC MINH; hiện 16 nhóm [THẤP], 2 CHƯA XÁC MINH (N03, N20), chỉ N18 và N19 còn [TB] |
+| 5 | Vá 7 lỗ hổng script + kiểm danh sách type / export_method, độ tin cậy nhóm | Đã vá cả 7 lỗ hổng + 3 kiểm thêm; 21 kiểm thử (thêm 10) → OK. Áp quy tắc "độ tin cậy nhóm ≤ nguồn yếu nhất": 7 nhóm hạ từ [TB] xuống [THẤP] (N01, N05, N06, N07, N12, N13, N14), N03 hạ xuống CHƯA XÁC MINH; sau khi kiểm lại, S08 hạ [THẤP] nên N18, N19 cũng hạ → hiện 18 nhóm [THẤP], 2 CHƯA XÁC MINH (N03, N20), không nhóm nào [TB] |
 | 6 | Báo cáo: "21 dòng", mâu thuẫn về mạng | Sửa thành 27; mục 3 tách rõ trước / sau khi mở mạng và nguồn nào đọc được trang gốc |
 | 7 | `p1-radar.md` dòng 5 lỗi thời | Đã sửa, trỏ sang `p1-cong-cu-so-lieu.md` |
 | 8 | Giá FastMoss [THẤP]; "KTS chưa tự mở trang giá Metric" | Đã ghi trong `p1-cong-cu-so-lieu.md` |
 
 Vẫn chưa làm được: KTS độc lập mở trang giá Metric (chủ dự án nên tự mở 1 lần); điều khoản dùng dữ liệu của các công cụ.
-Sau khi sửa: `python3 apps/radar/kiem_tra.py` → ĐẠT; `python3 -m unittest apps/radar/test_kiem_tra.py` → 21 kiểm thử OK.
+KTS kiểm lại (12/11/2026): ≈ 8,0, còn 3 việc nhỏ + 3 lỗ hổng script (ngày tương lai, URL rỗng `http://`, mã nhóm trùng) → đã sửa cả 6.
+Sau khi sửa: `python3 apps/radar/kiem_tra.py` → ĐẠT; `python3 -m unittest apps/radar/test_kiem_tra.py` → 24 kiểm thử OK.
