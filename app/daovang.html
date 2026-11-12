@@ -1,0 +1,863 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- Chặn MỌI kết nối mạng: không tải gì từ ngoài, không gửi gì đi. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; connect-src 'none'; form-action 'none'; base-uri 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#0f766e">
+<title>Đào Vàng · Lợi nhuận mỗi đơn</title>
+<style>
+:root{
+  --nen:#f4f6f5; --the:#ffffff; --chu:#17201d; --phu:#5b6862; --vien:#d9e0dd;
+  --chinh:#0f766e; --chinh-nhat:#e3f2ef; --lai:#15803d; --lo:#b91c1c; --canh:#92400e; --canh-nen:#fff7e6;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --nen:#0f1412; --the:#18201d; --chu:#e6ece9; --phu:#9aa8a2; --vien:#2b3632;
+    --chinh:#2dd4bf; --chinh-nhat:#12302b; --lai:#4ade80; --lo:#f87171; --canh:#fbbf24; --canh-nen:#2a2110; }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--nen);color:var(--chu);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.khung{max-width:480px;margin:0 auto;padding:12px 16px 40px}
+header h1{font-size:20px;margin:4px 0 2px}
+header p{margin:0;color:var(--phu);font-size:13px}
+.the{background:var(--the);border:1px solid var(--vien);border-radius:14px;padding:14px;margin:12px 0}
+.the h2{font-size:15px;margin:0 0 10px;color:var(--phu);font-weight:600;text-transform:uppercase;letter-spacing:.03em}
+label{display:block;font-size:14px;color:var(--phu);margin:10px 0 4px}
+label small{color:var(--phu);font-weight:400}
+input[type=text],input[type=date],select{width:100%;font:inherit;font-size:17px;padding:10px 12px;border:1px solid var(--vien);
+  border-radius:10px;background:var(--nen);color:var(--chu);min-height:46px}
+input:focus,select:focus{outline:2px solid var(--chinh);outline-offset:1px}
+.hang{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}
+.chon{display:flex;align-items:center;gap:10px;margin:12px 0 2px;font-size:15px;color:var(--chu)}
+.chon input{width:22px;height:22px;accent-color:var(--chinh)}
+details>summary{cursor:pointer;font-weight:600;color:var(--chinh);padding:6px 0;list-style:none}
+details>summary::-webkit-details-marker{display:none}
+details>summary::before{content:"▸ "}
+details[open]>summary::before{content:"▾ "}
+.so-lon{font-size:34px;font-weight:700;letter-spacing:-.01em;margin:2px 0}
+.lai{color:var(--lai)} .lo{color:var(--lo)}
+.chi-so{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.chi-so div{background:var(--chinh-nhat);border-radius:10px;padding:8px 10px}
+.chi-so b{display:block;font-size:18px}
+.chi-so span{font-size:12px;color:var(--phu)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+td{padding:6px 0;border-bottom:1px solid var(--vien);vertical-align:top}
+td.so{text-align:right;white-space:nowrap;padding-left:8px;font-variant-numeric:tabular-nums}
+td small{display:block;color:var(--phu);font-size:11px;word-break:break-word}
+tr.tong td{font-weight:700;border-bottom:none}
+.loi{background:var(--canh-nen);color:var(--canh);border-radius:10px;padding:10px 12px;font-size:14px}
+ul.canh{padding-left:18px;margin:6px 0 0;font-size:13px;color:var(--canh)}
+ul.canh li{margin:4px 0}
+.dam-bao{font-size:13px;color:var(--phu);border-left:3px solid var(--canh);padding:6px 10px;margin:12px 0}
+.nut{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+button,.nut label.btn{font:inherit;font-size:15px;border:1px solid var(--chinh);background:var(--the);color:var(--chinh);
+  border-radius:10px;padding:10px 14px;min-height:44px;cursor:pointer;margin:0}
+button.chinh{background:var(--chinh);color:var(--the)}
+button.xoa{border-color:var(--lo);color:var(--lo)}
+.so-sku li{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--vien)}
+.so-sku ul{list-style:none;padding:0;margin:8px 0 0}
+.so-sku li button{padding:6px 10px;min-height:36px;font-size:14px}
+.ghi{font-size:12px;color:var(--phu)}
+#thong-bao{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--chu);color:var(--nen);
+  padding:10px 16px;border-radius:10px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none;max-width:90vw}
+#thong-bao.hien{opacity:1}
+.an{display:none}
+.khung{padding-bottom:84px}
+#tom-tat{position:fixed;left:0;right:0;bottom:0;background:var(--the);border-top:1px solid var(--vien);
+  padding:10px 16px calc(10px + env(safe-area-inset-bottom));display:flex;justify-content:space-between;align-items:center;
+  gap:8px;font-size:14px;color:var(--phu);z-index:5}
+#tom-tat b{font-size:20px}
+#tom-tat a{color:var(--chinh);font-weight:600;text-decoration:none;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="khung">
+  <header>
+    <h1>Lợi nhuận mỗi đơn</h1>
+    <p>Đào Vàng · Shopee / TikTok Shop · chạy trên máy, không cần mạng</p>
+  </header>
+
+  <div class="dam-bao" id="dong-dam-bao"></div>
+
+  <section class="the" aria-label="Nhập liệu">
+    <h2>Đơn hàng</h2>
+    <div class="hang">
+      <div><label for="san">Sàn</label>
+        <select id="san"><option value="shopee">Shopee</option><option value="tiktok">TikTok Shop</option></select></div>
+      <div><label for="ngay_ban">Ngày bán</label><input id="ngay_ban" type="date"></div>
+    </div>
+    <label for="nganh">Ngành hàng <small>(theo bảng phí)</small></label>
+    <select id="nganh"></select>
+    <div class="hang">
+      <div><label for="gia_ban">Giá bán (đ)</label><input id="gia_ban" type="text" inputmode="numeric" data-loai="tien" placeholder="150.000"></div>
+      <div><label for="gia_von">Giá vốn (đ)</label><input id="gia_von" type="text" inputmode="numeric" data-loai="tien" placeholder="60.000"></div>
+      <div><label for="giam_gia_shop">Shop giảm giá (đ)</label><input id="giam_gia_shop" type="text" inputmode="numeric" data-loai="tien" placeholder="0"></div>
+      <div><label for="dong_goi">Đóng gói (đ)</label><input id="dong_goi" type="text" inputmode="numeric" data-loai="tien" placeholder="0"></div>
+      <div><label for="ty_le_hoan">Tỷ lệ hoàn (%)</label><input id="ty_le_hoan" type="text" inputmode="decimal" data-loai="pct" placeholder="0"></div>
+      <div><label for="quang_cao_pct">Quảng cáo (% DT)</label><input id="quang_cao_pct" type="text" inputmode="decimal" data-loai="pct" placeholder="0"></div>
+    </div>
+
+    <details id="nang-cao">
+      <summary>Thêm tùy chọn</summary>
+      <div class="hang">
+        <div><label for="ship_shop_chiu">Ship shop chịu (đ)</label><input id="ship_shop_chiu" type="text" inputmode="numeric" data-loai="tien" placeholder="0"></div>
+        <div><label for="hoa_hong_aff_shop_tra">Affiliate shop trả (%)</label><input id="hoa_hong_aff_shop_tra" type="text" inputmode="decimal" data-loai="pct" placeholder="0"></div>
+        <div><label for="ship_tra_hang">Ship trả hàng (đ)</label><input id="ship_tra_hang" type="text" inputmode="numeric" data-loai="tien" data-rong="null" placeholder="theo bảng phí"></div>
+        <div><label for="ty_le_hong_hang_hoan">Hàng hoàn hỏng (%)</label><input id="ty_le_hong_hang_hoan" type="text" inputmode="decimal" data-loai="pct" placeholder="30"></div>
+        <div><label for="thue_gtgt">Thuế GTGT sàn trừ (%)</label><input id="thue_gtgt" type="text" inputmode="decimal" data-loai="pct" data-rong="null" placeholder="1"></div>
+        <div><label for="thue_tncn">Thuế TNCN sàn trừ (%)</label><input id="thue_tncn" type="text" inputmode="decimal" data-loai="pct" data-rong="null" placeholder="0,5"></div>
+        <div><label for="phi_nganh_tu_nhap">Phí ngành tự nhập (%)</label><input id="phi_nganh_tu_nhap" type="text" inputmode="decimal" data-loai="pct" data-rong="null" placeholder="theo bảng phí"></div>
+        <div><label for="che_do_khoang">Phí dạng khoảng</label>
+          <select id="che_do_khoang"><option value="cao">Mức cao (thận trọng)</option><option value="giua">Mức giữa</option><option value="thap">Mức thấp</option></select></div>
+      </div>
+      <label class="chon"><input id="tham_gia_voucher_san" type="checkbox"> Tham gia Voucher Xtra / VXP của sàn</label>
+      <label class="chon"><input id="shop_moi_mien_phi_co_dinh" type="checkbox"> Shopee: shop mới miễn phí cố định</label>
+      <label class="chon"><input id="bo_phi_ha_tang" type="checkbox"> Shopee: bỏ phí hạ tầng 3.000đ (chưa xác minh)</label>
+      <div class="hang">
+        <div><label for="hoa_hong_aff_nhan">So với làm affiliate: hoa hồng nhận (%)</label><input id="hoa_hong_aff_nhan" type="text" inputmode="decimal" data-loai="pct" data-rong="null" placeholder="bỏ trống = không so"></div>
+        <div><label for="thue_aff">Thuế trên hoa hồng affiliate (%)</label><input id="thue_aff" type="text" inputmode="decimal" data-loai="pct" placeholder="0"></div>
+      </div>
+    </details>
+    <p class="ghi">Nhập liệu tự lưu trên máy này (trình duyệt). Không nhập tên, số điện thoại, địa chỉ khách vào đây.</p>
+  </section>
+
+  <section class="the" id="o-ket-qua" aria-label="Kết quả" aria-live="polite">
+    <h2>Kết quả</h2>
+    <div id="ket-qua"></div>
+  </section>
+
+  <section class="the so-sku" aria-label="Sổ SKU">
+    <h2>Sổ SKU đã lưu</h2>
+    <div class="hang" style="grid-template-columns:1fr auto;align-items:end">
+      <div><label for="ten_sku">Tên SKU / ghi chú</label><input id="ten_sku" type="text" placeholder="vd. Áo thun trắng M"></div>
+      <div><button class="chinh" id="nut-luu-sku" type="button">Lưu</button></div>
+    </div>
+    <ul id="ds-sku"></ul>
+  </section>
+
+  <section class="the" aria-label="Sao lưu">
+    <h2>Sao lưu</h2>
+    <p class="ghi">Dữ liệu chỉ nằm trong trình duyệt này. Xóa dữ liệu trình duyệt là mất → tải bản sao lưu định kỳ.</p>
+    <div class="nut">
+      <button type="button" id="nut-tai">Tải bản sao lưu</button>
+      <label class="btn" for="tep-nhap">Nhập bản sao lưu</label>
+      <input type="file" id="tep-nhap" accept="application/json,.json" class="an">
+      <button type="button" class="xoa" id="nut-xoa">Xóa ô nhập</button>
+    </div>
+  </section>
+
+  <p class="ghi" id="phien-ban-bang-phi"></p>
+</div>
+<div id="tom-tat"><span>Lợi nhuận / đơn<br><b id="tt-ln">—</b></span><span id="tt-phu"></span><a href="#o-ket-qua">Xem chi tiết ↓</a></div>
+<div id="thong-bao" role="status"></div>
+
+<script id="bang-phi" type="application/json">{"nguon_tep":"bao-cao/dot0/bang-phi-v1.csv","sha256":"81f4ad30a7941c055f9014f2416293176fa0a308c58121ee880d654f6dfdb6d3","so_dong_csv":79,"dong":[{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Thoi trang (tat ca)","muc":{"thap":13.5,"cao":16.5,"tran_vnd":null,"trung_vi":null,"goc":"13.5-16.5"},"don_vi":"% gia tri san pham","tu_ngay":"2026-05-23","den_ngay":null,"nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Truoc 23/05/2026: 12.5-13.5. Phi co dinh (da gom GTGT) tren gia tri moi san pham sau khi tru khuyen mai nguoi ban; chi tinh khi don 'Da giao' hoac hoan tien ngay (tru ly do chua nhan hang). Tra PDF chi tiet nganh cap 3 trong bai nguon.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Thoi trang (tat ca)","muc":{"thap":12.5,"cao":13.5,"tran_vnd":null,"trung_vi":null,"goc":"12.5-13.5"},"don_vi":"% gia tri san pham","tu_ngay":null,"den_ngay":"2026-05-22","nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Mức cũ suy từ ghi chú: Truoc 23/05/2026: 12.5-13.5. Phi co dinh (da gom GTGT) tren gia tri moi san pham sau khi tru khuyen mai nguoi ban; chi tinh khi don 'Da giao' hoac hoan tien ngay (tru ly do chua nhan hang). Tra PDF chi tiet nganh cap 3 trong bai nguon.","canh_bao":["mức cũ lấy từ cột ghi_chu; không rõ ngày bắt đầu của mức cũ"],"suy_tu_ghi_chu":true},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Sac dep","muc":{"thap":17.0,"cao":17.0,"tran_vnd":null,"trung_vi":null,"goc":"17.0"},"don_vi":"% gia tri san pham","tu_ngay":"2026-05-23","den_ngay":null,"nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Truoc 23/05/2026: 14.0.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Sac dep","muc":{"thap":14.0,"cao":14.0,"tran_vnd":null,"trung_vi":null,"goc":"14.0"},"don_vi":"% gia tri san pham","tu_ngay":null,"den_ngay":"2026-05-22","nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Mức cũ suy từ ghi chú: Truoc 23/05/2026: 14.0.","canh_bao":["mức cũ lấy từ cột ghi_chu; không rõ ngày bắt đầu của mức cũ"],"suy_tu_ghi_chu":true},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Suc khoe","muc":{"thap":15.5,"cao":17.0,"tran_vnd":null,"trung_vi":null,"goc":"15.5-17.0"},"don_vi":"% gia tri san pham","tu_ngay":"2026-05-23","den_ngay":null,"nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Truoc 23/05/2026: 12.5-14.0.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Suc khoe","muc":{"thap":12.5,"cao":14.0,"tran_vnd":null,"trung_vi":null,"goc":"12.5-14.0"},"don_vi":"% gia tri san pham","tu_ngay":null,"den_ngay":"2026-05-22","nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Mức cũ suy từ ghi chú: Truoc 23/05/2026: 12.5-14.0.","canh_bao":["mức cũ lấy từ cột ghi_chu; không rõ ngày bắt đầu của mức cũ"],"suy_tu_ghi_chu":true},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Cham soc thu cung","muc":{"thap":14.0,"cao":14.0,"tran_vnd":null,"trung_vi":null,"goc":"14.0"},"don_vi":"% gia tri san pham","tu_ngay":"2026-05-23","den_ngay":null,"nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Truoc 23/05/2026: 13.0.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Cham soc thu cung","muc":{"thap":13.0,"cao":13.0,"tran_vnd":null,"trung_vi":null,"goc":"13.0"},"don_vi":"% gia tri san pham","tu_ngay":null,"den_ngay":"2026-05-22","nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Mức cũ suy từ ghi chú: Truoc 23/05/2026: 13.0.","canh_bao":["mức cũ lấy từ cột ghi_chu; không rõ ngày bắt đầu của mức cũ"],"suy_tu_ghi_chu":true},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Tieu dung con lai (gom Me \u0026 Be ngoai nhom liet ke)","muc":{"thap":11.0,"cao":16.0,"tran_vnd":null,"trung_vi":null,"goc":"11.0-16.0"},"don_vi":"% gia tri san pham","tu_ngay":"2026-05-23","den_ngay":null,"nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Truoc 23/05/2026: 10.0-13.0. Gia dinh: nhom Me \u0026 Be khong liet ke rieng nam trong 'Tieu dung con lai' - can doi chieu PDF cap 3.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Tieu dung con lai (gom Me \u0026 Be ngoai nhom liet ke)","muc":{"thap":10.0,"cao":13.0,"tran_vnd":null,"trung_vi":null,"goc":"10.0-13.0"},"don_vi":"% gia tri san pham","tu_ngay":null,"den_ngay":"2026-05-22","nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Mức cũ suy từ ghi chú: Truoc 23/05/2026: 10.0-13.0. Gia dinh: nhom Me \u0026 Be khong liet ke rieng nam trong 'Tieu dung con lai' - can doi chieu PDF cap 3.","canh_bao":["mức cũ lấy từ cột ghi_chu; không rõ ngày bắt đầu của mức cũ"],"suy_tu_ghi_chu":true},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Me \u0026 Be - cham soc da be; san pham tam goi be","muc":{"thap":10.5,"cao":10.5,"tran_vnd":null,"trung_vi":null,"goc":"10.5"},"don_vi":"% gia tri san pham","tu_ngay":"2026-05-23","den_ngay":null,"nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Truoc 23/05/2026: 11.5.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Me \u0026 Be - cham soc da be; san pham tam goi be","muc":{"thap":11.5,"cao":11.5,"tran_vnd":null,"trung_vi":null,"goc":"11.5"},"don_vi":"% gia tri san pham","tu_ngay":null,"den_ngay":"2026-05-22","nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Mức cũ suy từ ghi chú: Truoc 23/05/2026: 11.5.","canh_bao":["mức cũ lấy từ cột ghi_chu; không rõ ngày bắt đầu của mức cũ"],"suy_tu_ghi_chu":true},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Thuc pham \u0026 do uong (nuoc tinh khiet, thuc pham kho/dong hop, mi/gao, nguyen lieu, tuoi song, trung)","muc":{"thap":10.0,"cao":10.0,"tran_vnd":null,"trung_vi":null,"goc":"10.0"},"don_vi":"% gia tri san pham","tu_ngay":"2026-05-23","den_ngay":null,"nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Truoc 23/05/2026: 10.0-11.0. Nuoc tinh khiet \u0026 thuc pham kho giam 11-\u003e10; cac nhom khac giu 10.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Thuc pham \u0026 do uong (nuoc tinh khiet, thuc pham kho/dong hop, mi/gao, nguyen lieu, tuoi song, trung)","muc":{"thap":10.0,"cao":11.0,"tran_vnd":null,"trung_vi":null,"goc":"10.0-11.0"},"don_vi":"% gia tri san pham","tu_ngay":null,"den_ngay":"2026-05-22","nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Mức cũ suy từ ghi chú: Truoc 23/05/2026: 10.0-11.0. Nuoc tinh khiet \u0026 thuc pham kho giam 11-\u003e10; cac nhom khac giu 10.","canh_bao":["mức cũ lấy từ cột ghi_chu; không rõ ngày bắt đầu của mức cũ"],"suy_tu_ghi_chu":true},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Nha cua \u0026 Doi song - dung cu cham soc nha cua (choi, lau nha, tui rac, khan giay)","muc":{"thap":10.0,"cao":10.5,"tran_vnd":null,"trung_vi":null,"goc":"10.0-10.5"},"don_vi":"% gia tri san pham","tu_ngay":"2026-05-23","den_ngay":null,"nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Truoc 23/05/2026: 11.0-11.5.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Nha cua \u0026 Doi song - dung cu cham soc nha cua (choi, lau nha, tui rac, khan giay)","muc":{"thap":11.0,"cao":11.5,"tran_vnd":null,"trung_vi":null,"goc":"11.0-11.5"},"don_vi":"% gia tri san pham","tu_ngay":null,"den_ngay":"2026-05-22","nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Mức cũ suy từ ghi chú: Truoc 23/05/2026: 11.0-11.5.","canh_bao":["mức cũ lấy từ cột ghi_chu; không rõ ngày bắt đầu của mức cũ"],"suy_tu_ghi_chu":true},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Nha cua \u0026 Doi song - chat tay rua, phu kien giat la, giay ve sinh","muc":{"thap":10.5,"cao":10.5,"tran_vnd":null,"trung_vi":null,"goc":"10.5"},"don_vi":"% gia tri san pham","tu_ngay":"2026-05-23","den_ngay":null,"nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Truoc 23/05/2026: 10.5.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Nha cua \u0026 Doi song - chat tay rua, phu kien giat la, giay ve sinh","muc":{"thap":10.5,"cao":10.5,"tran_vnd":null,"trung_vi":null,"goc":"10.5"},"don_vi":"% gia tri san pham","tu_ngay":null,"den_ngay":"2026-05-22","nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Mức cũ suy từ ghi chú: Truoc 23/05/2026: 10.5.","canh_bao":["mức cũ lấy từ cột ghi_chu; không rõ ngày bắt đầu của mức cũ"],"suy_tu_ghi_chu":true},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Nha cua \u0026 Doi song - con lai","muc":{"thap":13.0,"cao":16.0,"tran_vnd":null,"trung_vi":null,"goc":"13.0-16.0"},"don_vi":"% gia tri san pham","tu_ngay":"2026-05-23","den_ngay":null,"nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Truoc 23/05/2026: 10.0-13.0.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Nha cua \u0026 Doi song - con lai","muc":{"thap":10.0,"cao":13.0,"tran_vnd":null,"trung_vi":null,"goc":"10.0-13.0"},"don_vi":"% gia tri san pham","tu_ngay":null,"den_ngay":"2026-05-22","nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Mức cũ suy từ ghi chú: Truoc 23/05/2026: 10.0-13.0.","canh_bao":["mức cũ lấy từ cột ghi_chu; không rõ ngày bắt đầu của mức cũ"],"suy_tu_ghi_chu":true},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Van phong pham","muc":{"thap":11.0,"cao":16.0,"tran_vnd":null,"trung_vi":null,"goc":"11.0-16.0"},"don_vi":"% gia tri san pham","tu_ngay":"2026-05-23","den_ngay":null,"nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Truoc 23/05/2026: 9.0-13.0.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Van phong pham","muc":{"thap":9.0,"cao":13.0,"tran_vnd":null,"trung_vi":null,"goc":"9.0-13.0"},"don_vi":"% gia tri san pham","tu_ngay":null,"den_ngay":"2026-05-22","nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Mức cũ suy từ ghi chú: Truoc 23/05/2026: 9.0-13.0.","canh_bao":["mức cũ lấy từ cột ghi_chu; không rõ ngày bắt đầu của mức cũ"],"suy_tu_ghi_chu":true},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"So thich \u0026 Suu tam","muc":{"thap":15.0,"cao":17.0,"tran_vnd":null,"trung_vi":null,"goc":"15.0-17.0"},"don_vi":"% gia tri san pham","tu_ngay":"2026-05-23","den_ngay":null,"nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Truoc 23/05/2026: 13.0-14.0.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"So thich \u0026 Suu tam","muc":{"thap":13.0,"cao":14.0,"tran_vnd":null,"trung_vi":null,"goc":"13.0-14.0"},"don_vi":"% gia tri san pham","tu_ngay":null,"den_ngay":"2026-05-22","nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Mức cũ suy từ ghi chú: Truoc 23/05/2026: 13.0-14.0.","canh_bao":["mức cũ lấy từ cột ghi_chu; không rõ ngày bắt đầu của mức cũ"],"suy_tu_ghi_chu":true},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Sach \u0026 Tap chi","muc":{"thap":14.0,"cao":15.0,"tran_vnd":null,"trung_vi":null,"goc":"14.0-15.0"},"don_vi":"% gia tri san pham","tu_ngay":"2026-05-23","den_ngay":null,"nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Truoc 23/05/2026: 12.0.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Sach \u0026 Tap chi","muc":{"thap":12.0,"cao":12.0,"tran_vnd":null,"trung_vi":null,"goc":"12.0"},"don_vi":"% gia tri san pham","tu_ngay":null,"den_ngay":"2026-05-22","nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Mức cũ suy từ ghi chú: Truoc 23/05/2026: 12.0.","canh_bao":["mức cũ lấy từ cột ghi_chu; không rõ ngày bắt đầu của mức cũ"],"suy_tu_ghi_chu":true},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Mo to, xe may","muc":{"thap":1.5,"cao":1.5,"tran_vnd":null,"trung_vi":null,"goc":"1.5"},"don_vi":"% gia tri san pham","tu_ngay":"2026-05-23","den_ngay":null,"nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Truoc 23/05/2026: 1.5.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Mo to, xe may","muc":{"thap":1.5,"cao":1.5,"tran_vnd":null,"trung_vi":null,"goc":"1.5"},"don_vi":"% gia tri san pham","tu_ngay":null,"den_ngay":"2026-05-22","nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Mức cũ suy từ ghi chú: Truoc 23/05/2026: 1.5.","canh_bao":["mức cũ lấy từ cột ghi_chu; không rõ ngày bắt đầu của mức cũ"],"suy_tu_ghi_chu":true},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"O to","muc":{"thap":3.5,"cao":3.5,"tran_vnd":null,"trung_vi":null,"goc":"3.5"},"don_vi":"% gia tri san pham","tu_ngay":"2026-05-23","den_ngay":null,"nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Truoc 23/05/2026: 1.5.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"O to","muc":{"thap":1.5,"cao":1.5,"tran_vnd":null,"trung_vi":null,"goc":"1.5"},"don_vi":"% gia tri san pham","tu_ngay":null,"den_ngay":"2026-05-22","nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Mức cũ suy từ ghi chú: Truoc 23/05/2026: 1.5.","canh_bao":["mức cũ lấy từ cột ghi_chu; không rõ ngày bắt đầu của mức cũ"],"suy_tu_ghi_chu":true},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Dien tu - chuot, ban phim, bang ve dien tu","muc":{"thap":6.0,"cao":6.0,"tran_vnd":null,"trung_vi":null,"goc":"6.0"},"don_vi":"% gia tri san pham","tu_ngay":"2026-05-23","den_ngay":null,"nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Truoc 23/05/2026: 10.0.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Dien tu - chuot, ban phim, bang ve dien tu","muc":{"thap":10.0,"cao":10.0,"tran_vnd":null,"trung_vi":null,"goc":"10.0"},"don_vi":"% gia tri san pham","tu_ngay":null,"den_ngay":"2026-05-22","nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Mức cũ suy từ ghi chú: Truoc 23/05/2026: 10.0.","canh_bao":["mức cũ lấy từ cột ghi_chu; không rõ ngày bắt đầu của mức cũ"],"suy_tu_ghi_chu":true},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Dien tu - laptop, man hinh","muc":{"thap":2.0,"cao":2.0,"tran_vnd":null,"trung_vi":null,"goc":"2.0"},"don_vi":"% gia tri san pham","tu_ngay":"2026-05-23","den_ngay":null,"nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Truoc 23/05/2026: 2.0.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Dien tu - laptop, man hinh","muc":{"thap":2.0,"cao":2.0,"tran_vnd":null,"trung_vi":null,"goc":"2.0"},"don_vi":"% gia tri san pham","tu_ngay":null,"den_ngay":"2026-05-22","nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Mức cũ suy từ ghi chú: Truoc 23/05/2026: 2.0.","canh_bao":["mức cũ lấy từ cột ghi_chu; không rõ ngày bắt đầu của mức cũ"],"suy_tu_ghi_chu":true},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Dien tu - may tinh ban","muc":{"thap":2.0,"cao":2.5,"tran_vnd":null,"trung_vi":null,"goc":"2.0-2.5"},"don_vi":"% gia tri san pham","tu_ngay":"2026-05-23","den_ngay":null,"nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Truoc 23/05/2026: 2.0-2.5.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Dien tu - may tinh ban","muc":{"thap":2.0,"cao":2.5,"tran_vnd":null,"trung_vi":null,"goc":"2.0-2.5"},"don_vi":"% gia tri san pham","tu_ngay":null,"den_ngay":"2026-05-22","nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Mức cũ suy từ ghi chú: Truoc 23/05/2026: 2.0-2.5.","canh_bao":["mức cũ lấy từ cột ghi_chu; không rõ ngày bắt đầu của mức cũ"],"suy_tu_ghi_chu":true},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Dien tu - linh kien may tinh","muc":{"thap":7.5,"cao":7.5,"tran_vnd":null,"trung_vi":null,"goc":"7.5"},"don_vi":"% gia tri san pham","tu_ngay":"2026-05-23","den_ngay":null,"nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Truoc 23/05/2026: 7.5.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Dien tu - linh kien may tinh","muc":{"thap":7.5,"cao":7.5,"tran_vnd":null,"trung_vi":null,"goc":"7.5"},"don_vi":"% gia tri san pham","tu_ngay":null,"den_ngay":"2026-05-22","nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Mức cũ suy từ ghi chú: Truoc 23/05/2026: 7.5.","canh_bao":["mức cũ lấy từ cột ghi_chu; không rõ ngày bắt đầu của mức cũ"],"suy_tu_ghi_chu":true},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Dien tu - dien thoai, may tinh bang","muc":{"thap":2.0,"cao":2.0,"tran_vnd":null,"trung_vi":null,"goc":"2.0"},"don_vi":"% gia tri san pham","tu_ngay":"2026-05-23","den_ngay":null,"nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Truoc 23/05/2026: 2.0.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Dien tu - dien thoai, may tinh bang","muc":{"thap":2.0,"cao":2.0,"tran_vnd":null,"trung_vi":null,"goc":"2.0"},"don_vi":"% gia tri san pham","tu_ngay":null,"den_ngay":"2026-05-22","nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Mức cũ suy từ ghi chú: Truoc 23/05/2026: 2.0.","canh_bao":["mức cũ lấy từ cột ghi_chu; không rõ ngày bắt đầu của mức cũ"],"suy_tu_ghi_chu":true},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Dien tu - the sim","muc":{"thap":12.0,"cao":12.0,"tran_vnd":null,"trung_vi":null,"goc":"12.0"},"don_vi":"% gia tri san pham","tu_ngay":"2026-05-23","den_ngay":null,"nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Truoc 23/05/2026: 12.0.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Dien tu - the sim","muc":{"thap":12.0,"cao":12.0,"tran_vnd":null,"trung_vi":null,"goc":"12.0"},"don_vi":"% gia tri san pham","tu_ngay":null,"den_ngay":"2026-05-22","nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Mức cũ suy từ ghi chú: Truoc 23/05/2026: 12.0.","canh_bao":["mức cũ lấy từ cột ghi_chu; không rõ ngày bắt đầu của mức cũ"],"suy_tu_ghi_chu":true},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Dien tu - may anh \u0026 flycam","muc":{"thap":7.5,"cao":8.0,"tran_vnd":null,"trung_vi":null,"goc":"7.5-8.0"},"don_vi":"% gia tri san pham","tu_ngay":"2026-05-23","den_ngay":null,"nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Truoc 23/05/2026: 7.5-8.0.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Dien tu - may anh \u0026 flycam","muc":{"thap":7.5,"cao":8.0,"tran_vnd":null,"trung_vi":null,"goc":"7.5-8.0"},"don_vi":"% gia tri san pham","tu_ngay":null,"den_ngay":"2026-05-22","nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Mức cũ suy từ ghi chú: Truoc 23/05/2026: 7.5-8.0.","canh_bao":["mức cũ lấy từ cột ghi_chu; không rõ ngày bắt đầu của mức cũ"],"suy_tu_ghi_chu":true},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Dien tu - gia dung (may rua bat)","muc":{"thap":8.0,"cao":8.0,"tran_vnd":null,"trung_vi":null,"goc":"8.0"},"don_vi":"% gia tri san pham","tu_ngay":"2026-05-23","den_ngay":null,"nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Truoc 23/05/2026: 8.0.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Dien tu - gia dung (may rua bat)","muc":{"thap":8.0,"cao":8.0,"tran_vnd":null,"trung_vi":null,"goc":"8.0"},"don_vi":"% gia tri san pham","tu_ngay":null,"den_ngay":"2026-05-22","nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Mức cũ suy từ ghi chú: Truoc 23/05/2026: 8.0.","canh_bao":["mức cũ lấy từ cột ghi_chu; không rõ ngày bắt đầu của mức cũ"],"suy_tu_ghi_chu":true},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Dien tu - Tivi \u0026 phu kien","muc":{"thap":7.5,"cao":8.0,"tran_vnd":null,"trung_vi":null,"goc":"7.5-8.0"},"don_vi":"% gia tri san pham","tu_ngay":"2026-05-23","den_ngay":null,"nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Truoc 23/05/2026: 7.5-8.0.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Dien tu - Tivi \u0026 phu kien","muc":{"thap":7.5,"cao":8.0,"tran_vnd":null,"trung_vi":null,"goc":"7.5-8.0"},"don_vi":"% gia tri san pham","tu_ngay":null,"den_ngay":"2026-05-22","nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Mức cũ suy từ ghi chú: Truoc 23/05/2026: 7.5-8.0.","canh_bao":["mức cũ lấy từ cột ghi_chu; không rõ ngày bắt đầu của mức cũ"],"suy_tu_ghi_chu":true},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Dien tu - Gaming \u0026 Console","muc":{"thap":8.5,"cao":12.0,"tran_vnd":null,"trung_vi":null,"goc":"8.5-12.0"},"don_vi":"% gia tri san pham","tu_ngay":"2026-05-23","den_ngay":null,"nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Truoc 23/05/2026: 7.5-10.0.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Dien tu - Gaming \u0026 Console","muc":{"thap":7.5,"cao":10.0,"tran_vnd":null,"trung_vi":null,"goc":"7.5-10.0"},"don_vi":"% gia tri san pham","tu_ngay":null,"den_ngay":"2026-05-22","nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Mức cũ suy từ ghi chú: Truoc 23/05/2026: 7.5-10.0.","canh_bao":["mức cũ lấy từ cột ghi_chu; không rõ ngày bắt đầu của mức cũ"],"suy_tu_ghi_chu":true},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Dien tu - Thiet bi am thanh","muc":{"thap":10.0,"cao":12.0,"tran_vnd":null,"trung_vi":null,"goc":"10.0-12.0"},"don_vi":"% gia tri san pham","tu_ngay":"2026-05-23","den_ngay":null,"nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Truoc 23/05/2026: 8.0-10.0.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Dien tu - Thiet bi am thanh","muc":{"thap":8.0,"cao":10.0,"tran_vnd":null,"trung_vi":null,"goc":"8.0-10.0"},"don_vi":"% gia tri san pham","tu_ngay":null,"den_ngay":"2026-05-22","nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Mức cũ suy từ ghi chú: Truoc 23/05/2026: 8.0-10.0.","canh_bao":["mức cũ lấy từ cột ghi_chu; không rõ ngày bắt đầu của mức cũ"],"suy_tu_ghi_chu":true},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Dien tu - Voucher \u0026 Dich vu","muc":{"thap":13.0,"cao":13.0,"tran_vnd":null,"trung_vi":null,"goc":"13.0"},"don_vi":"% gia tri san pham","tu_ngay":"2026-05-23","den_ngay":null,"nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Truoc 23/05/2026: 11.0.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Dien tu - Voucher \u0026 Dich vu","muc":{"thap":11.0,"cao":11.0,"tran_vnd":null,"trung_vi":null,"goc":"11.0"},"don_vi":"% gia tri san pham","tu_ngay":null,"den_ngay":"2026-05-22","nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Mức cũ suy từ ghi chú: Truoc 23/05/2026: 11.0.","canh_bao":["mức cũ lấy từ cột ghi_chu; không rõ ngày bắt đầu của mức cũ"],"suy_tu_ghi_chu":true},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Dien tu - con lai","muc":{"thap":8.5,"cao":15.0,"tran_vnd":null,"trung_vi":null,"goc":"8.5-15.0"},"don_vi":"% gia tri san pham","tu_ngay":"2026-05-23","den_ngay":null,"nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Truoc 23/05/2026: 7.5-11.0.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"Shopee","loai_phi":"phi_co_dinh","nganh":"Dien tu - con lai","muc":{"thap":7.5,"cao":11.0,"tran_vnd":null,"trung_vi":null,"goc":"7.5-11.0"},"don_vi":"% gia tri san pham","tu_ngay":null,"den_ngay":"2026-05-22","nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Mức cũ suy từ ghi chú: Truoc 23/05/2026: 7.5-11.0.","canh_bao":["mức cũ lấy từ cột ghi_chu; không rõ ngày bắt đầu của mức cũ"],"suy_tu_ghi_chu":true},{"san":"Shopee","loai_phi":"phi_xu_ly_giao_dich","nganh":"Tat ca (nguoi ban thuong)","muc":{"thap":6.0,"cao":6.0,"tran_vnd":null,"trung_vi":null,"goc":"6.0"},"don_vi":"% (gia SP truoc Shopee tro gia + phi VC nguoi mua tra - KM nguoi ban - KM ngan hang)","tu_ngay":"2026-05-01","den_ngay":null,"nguon":"https://banhang.shopee.vn/edu/article/2150 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Doi ten tu 'Phi Thanh Toan' ngay 24/04/2026; ap dung moi phuong thuc ke ca COD; da gom GTGT 8%. Mall tu 08/05/2026. Truoc do 4.91% (nguon blog, TB).","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"Shopee","loai_phi":"phi_xu_ly_giao_dich","nganh":"Tat ca (nguoi ban thuong)","muc":{"thap":4.91,"cao":4.91,"tran_vnd":null,"trung_vi":null,"goc":"4.91"},"don_vi":"% (gia SP truoc Shopee tro gia + phi VC nguoi mua tra - KM nguoi ban - KM ngan hang)","tu_ngay":null,"den_ngay":"2026-04-30","nguon":"https://banhang.shopee.vn/edu/article/2150 (tra 12/11/2026)","do_tin_cay":"TB","ghi_chu":"Mức cũ suy từ ghi chú: Doi ten tu 'Phi Thanh Toan' ngay 24/04/2026; ap dung moi phuong thuc ke ca COD; da gom GTGT 8%. Mall tu 08/05/2026. Truoc do 4.91% (nguon blog, TB).","canh_bao":["mức cũ lấy từ cột ghi_chu; không rõ ngày bắt đầu của mức cũ"],"suy_tu_ghi_chu":true},{"san":"Shopee","loai_phi":"phi_ha_tang","nganh":"Tat ca","muc":{"thap":3000.0,"cao":3000.0,"tran_vnd":null,"trung_vi":null,"goc":"3000"},"don_vi":"VND/don","tu_ngay":null,"den_ngay":null,"nguon":"https://banhang.shopee.vn/edu/article/25329 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Da gom GTGT; khong doi o bang cap nhat 05/2026. Ngay bat dau thu: CHUA XAC MINH.","canh_bao":["ngày bắt đầu hiệu lực CHƯA XÁC MINH (ô trống trong bảng phí)"],"suy_tu_ghi_chu":false},{"san":"Shopee","loai_phi":"phi_dich_vu_goi_voucher_xtra","nganh":"Tat ca (neu tham gia)","muc":{"thap":5.5,"cao":5.5,"tran_vnd":50000.0,"trung_vi":null,"goc":"5.5 (toi da 50000/san pham)"},"don_vi":"% gia tri san pham","tu_ngay":"2026-05-23","den_ngay":null,"nguon":"https://banhang.shopee.vn/edu/article/18182 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Truoc 23/05/2026: 4%. Khong ap dung dong thoi voi chinh sach dong tai tro ma uu dai. Co so tinh (truoc/sau KM nguoi ban): CHUA XAC MINH.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"Shopee","loai_phi":"phi_dich_vu_goi_voucher_xtra","nganh":"Tat ca (neu tham gia)","muc":{"thap":4.0,"cao":4.0,"tran_vnd":null,"trung_vi":null,"goc":"4"},"don_vi":"% gia tri san pham","tu_ngay":null,"den_ngay":"2026-05-22","nguon":"https://banhang.shopee.vn/edu/article/18182 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Mức cũ suy từ ghi chú: Truoc 23/05/2026: 4%. Khong ap dung dong thoi voi chinh sach dong tai tro ma uu dai. Co so tinh (truoc/sau KM nguoi ban): CHUA XAC MINH.","canh_bao":["mức cũ lấy từ cột ghi_chu; không rõ ngày bắt đầu của mức cũ"],"suy_tu_ghi_chu":true},{"san":"Shopee","loai_phi":"phi_dich_vu_PiShip","nganh":"Tat ca (neu tham gia)","muc":{"thap":2700.0,"cao":2700.0,"tran_vnd":null,"trung_vi":null,"goc":"2700"},"don_vi":"VND/don","tu_ngay":"2026-05-23","den_ngay":null,"nguon":"https://banhang.shopee.vn/edu/article/25329 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Truoc 23/05/2026: 1620.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"Shopee","loai_phi":"phi_dich_vu_PiShip","nganh":"Tat ca (neu tham gia)","muc":{"thap":1620.0,"cao":1620.0,"tran_vnd":null,"trung_vi":null,"goc":"1620"},"don_vi":"VND/don","tu_ngay":null,"den_ngay":"2026-05-22","nguon":"https://banhang.shopee.vn/edu/article/25329 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Mức cũ suy từ ghi chú: Truoc 23/05/2026: 1620.","canh_bao":["mức cũ lấy từ cột ghi_chu; không rõ ngày bắt đầu của mức cũ"],"suy_tu_ghi_chu":true},{"san":"Shopee","loai_phi":"dong_tai_tro_ma_uu_dai","nganh":"Tat ca","muc":null,"don_vi":"% gia tri ma","tu_ngay":"2026-05-23","den_ngay":null,"nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Truoc: nguoi ban 30 / Shopee 70. Toi da 50000/san pham. Khong ap dung khi dang dung Voucher Xtra.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"Shopee","loai_phi":"phi_rut_tien","nganh":"Tat ca","muc":{"thap":10800.0,"cao":10800.0,"tran_vnd":null,"trung_vi":null,"goc":"10800"},"don_vi":"VND/lan","tu_ngay":null,"den_ngay":null,"nguon":"https://banhang.shopee.vn/edu/article/234 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Mien phi 1 lan/thang; tu lan 2 tinh phi. Han muc 500 trieu/ngay tu 01/10/2026.","canh_bao":["ngày bắt đầu hiệu lực CHƯA XÁC MINH (ô trống trong bảng phí)"],"suy_tu_ghi_chu":false},{"san":"Shopee","loai_phi":"phi_dich_vu_Freeship_Xtra_goi_nguoi_ban","nganh":"Tat ca","muc":null,"don_vi":"","tu_ngay":null,"den_ngay":null,"nguon":"https://banhang.shopee.vn/edu/article/3110 (tra 12/11/2026)","do_tin_cay":"CHUA XAC MINH","ghi_chu":"Bai 'Phi dich vu hien hanh' chi liet ke Phi Ha Tang + goi Voucher Xtra, Content Xtra; blog ghi Freeship Xtra Plus 7.85% nhung khong thay trong thong bao chinh thuc 2026; Mall da bi ngung tu 08/09/2025. Hoi truc tiep Kenh Nguoi Ban.","canh_bao":["ngày bắt đầu hiệu lực CHƯA XÁC MINH (ô trống trong bảng phí)"],"suy_tu_ghi_chu":false},{"san":"Shopee","loai_phi":"phi_van_chuyen_tra_hang_nguoi_ban_chiu","nganh":"Tat ca","muc":{"thap":40000.0,"cao":40000.0,"tran_vnd":null,"trung_vi":null,"goc":"toi da 40000 (20000 neu Hoa toc)"},"don_vi":"VND/don","tu_ngay":"2025-04-01","den_ngay":null,"nguon":"https://banhang.shopee.vn/edu/article/10626 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Ap dung khi tra hang ly do doi y hoac loi nguoi ban; khong ap dung hoan mot phan / loi DVVC / hoan tien ngay.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"Shopee","loai_phi":"phi_dich_vu_hien_thi_quang_cao","nganh":"Tat ca","muc":null,"don_vi":"VND","tu_ngay":null,"den_ngay":null,"nguon":"https://banhang.shopee.vn/edu/article/25329 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"GTGT 8% tai thoi diem thanh toan. Chuong trinh Duy Tri Hien Thi (tu dong nap tu doanh thu) tam hoan tu 05/2026.","canh_bao":["ngày bắt đầu hiệu lực CHƯA XÁC MINH (ô trống trong bảng phí)"],"suy_tu_ghi_chu":false},{"san":"Shopee","loai_phi":"tiep_thi_lien_ket_nguoi_ban_tra","nganh":"Tat ca (neu tham gia)","muc":null,"don_vi":"% doanh thu don","tu_ngay":null,"den_ngay":null,"nguon":"https://help.shopee.vn/portal/4/article/183831 (tra 12/11/2026, qua tim kiem; chua doc toan van)","do_tin_cay":"TB","ghi_chu":"Hoa hong tru thang vao doanh thu don; muc toi thieu/toi da CHUA XAC MINH.","canh_bao":["ngày bắt đầu hiệu lực CHƯA XÁC MINH (ô trống trong bảng phí)"],"suy_tu_ghi_chu":false},{"san":"Shopee","loai_phi":"phi_SPayLater_dich_vu_tra_gop","nganh":"Tat ca (khi nguoi mua chon)","muc":{"thap":0.0,"cao":0.0,"tran_vnd":null,"trung_vi":null,"goc":"0/2/3/6 theo 1/2/3/6 ky"},"don_vi":"%","tu_ngay":"2027-01-01","den_ngay":null,"nguon":"https://banhang.shopee.vn/edu/article/24923 (qua tim kiem)","do_tin_cay":"THAP","ghi_chu":"Hai nguon mau thuan ve ngay hieu luc; cong them vao dong Phi Xu Ly Giao Dich.","canh_bao":["ngày hiệu lực mâu thuẫn giữa nguồn ('2026-09-01 hoac 2027-01-01'); lấy ngày muộn hơn"],"suy_tu_ghi_chu":false},{"san":"Shopee","loai_phi":"GTGT_tren_phi_san","nganh":"Tat ca","muc":{"thap":8.0,"cao":8.0,"tran_vnd":null,"trung_vi":null,"goc":"8"},"don_vi":"%","tu_ngay":"2025-07-01","den_ngay":"2026-12-31","nguon":"https://banhang.shopee.vn/edu/article/25329 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Nghi quyet 204/2025/QH15 (giam 10-\u003e8%). Tu 01/01/2027: CHUA XAC MINH (thong bao chi noi den het 12/2026) - hoi Shopee/ke toan.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"Shopee","loai_phi":"uu_dai_nguoi_ban_moi","nganh":"Nguoi ban thuong - sp dau tien dang tu 01/11/2026","muc":null,"don_vi":"","tu_ngay":"2026-11-01","den_ngay":null,"nguon":"https://banhang.shopee.vn/edu/article/2139 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Dieu kien: sp dau tien dang thanh cong tu 01/11/2026; chi mien Phi Co Dinh, KHONG mien phi xu ly giao dich/ha tang.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"Shopee","loai_phi":"uu_dai_nguoi_ban_moi_da_het_han","nganh":"Sp dau tien dang 01/01-31/05/2026","muc":null,"don_vi":"","tu_ngay":"2026-06-01","den_ngay":"2026-08-31","nguon":"https://banhang.shopee.vn/edu/article/27540 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"DA HET HAN 31/08/2026 - khong ap dung cho shop moi 11/2026.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"TikTok Shop","loai_phi":"phi_hoa_hong_nen_tang","nganh":"Muc mac dinh (nganh cap 3 khong liet ke)","muc":{"thap":14.0,"cao":14.0,"tran_vnd":null,"trung_vi":null,"goc":"14.0"},"don_vi":"%","tu_ngay":"2026-07-03","den_ngay":null,"nguon":"https://seller-vn.tiktok.com/university/essay?knowledge_id=3396736626312961 + PDF bieu phi hoa hong (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Mall: 15.5 tu 03/07/2026, 16.0 tu 03/08/2026; blog cu ghi 12.5 (tu 02/03/2026) - da bi thay.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"TikTok Shop","loai_phi":"phi_hoa_hong_nen_tang","nganh":"Thoi trang nu \u0026 noi y","muc":{"thap":14.0,"cao":15.0,"tran_vnd":null,"trung_vi":15.0,"goc":"14.0-15.0 (trung vi 15.0)"},"don_vi":"% (gia SP - KM nguoi ban; khong gom phi VC, khong tru tro gia san)","tu_ngay":"2026-07-03","den_ngay":null,"nguon":"https://seller-vn.tiktok.com/university/essay?knowledge_id=3396736626312961 + PDF bieu phi hoa hong (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Cot Marketplace trong PDF tren trang chinh thuc; da gom thue VN. Gop theo nganh cap 1: min-trung vi-max.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"TikTok Shop","loai_phi":"phi_hoa_hong_nen_tang","nganh":"Thoi trang nam \u0026 noi y","muc":{"thap":13.0,"cao":15.0,"tran_vnd":null,"trung_vi":14.75,"goc":"13.0-15.0 (trung vi 14.75)"},"don_vi":"% (gia SP - KM nguoi ban; khong gom phi VC, khong tru tro gia san)","tu_ngay":"2026-07-03","den_ngay":null,"nguon":"https://seller-vn.tiktok.com/university/essay?knowledge_id=3396736626312961 + PDF bieu phi hoa hong (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Cot Marketplace trong PDF tren trang chinh thuc; da gom thue VN. Gop theo nganh cap 1: min-trung vi-max.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"TikTok Shop","loai_phi":"phi_hoa_hong_nen_tang","nganh":"Giay dep","muc":{"thap":14.0,"cao":15.0,"tran_vnd":null,"trung_vi":14.0,"goc":"14.0-15.0 (trung vi 14.0)"},"don_vi":"% (gia SP - KM nguoi ban; khong gom phi VC, khong tru tro gia san)","tu_ngay":"2026-07-03","den_ngay":null,"nguon":"https://seller-vn.tiktok.com/university/essay?knowledge_id=3396736626312961 + PDF bieu phi hoa hong (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Cot Marketplace trong PDF tren trang chinh thuc; da gom thue VN. Gop theo nganh cap 1: min-trung vi-max.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"TikTok Shop","loai_phi":"phi_hoa_hong_nen_tang","nganh":"Phu kien thoi trang","muc":{"thap":13.0,"cao":15.5,"tran_vnd":null,"trung_vi":15.0,"goc":"13.0-15.5 (trung vi 15.0)"},"don_vi":"% (gia SP - KM nguoi ban; khong gom phi VC, khong tru tro gia san)","tu_ngay":"2026-07-03","den_ngay":null,"nguon":"https://seller-vn.tiktok.com/university/essay?knowledge_id=3396736626312961 + PDF bieu phi hoa hong (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Cot Marketplace trong PDF tren trang chinh thuc; da gom thue VN. Gop theo nganh cap 1: min-trung vi-max.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"TikTok Shop","loai_phi":"phi_hoa_hong_nen_tang","nganh":"Tui, vali","muc":{"thap":12.5,"cao":15.5,"tran_vnd":null,"trung_vi":14.0,"goc":"12.5-15.5 (trung vi 14.0)"},"don_vi":"% (gia SP - KM nguoi ban; khong gom phi VC, khong tru tro gia san)","tu_ngay":"2026-07-03","den_ngay":null,"nguon":"https://seller-vn.tiktok.com/university/essay?knowledge_id=3396736626312961 + PDF bieu phi hoa hong (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Cot Marketplace trong PDF tren trang chinh thuc; da gom thue VN. Gop theo nganh cap 1: min-trung vi-max.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"TikTok Shop","loai_phi":"phi_hoa_hong_nen_tang","nganh":"Trang suc \u0026 phu kien","muc":{"thap":9.0,"cao":14.0,"tran_vnd":null,"trung_vi":13.0,"goc":"9.0-14.0 (trung vi 13.0)"},"don_vi":"% (gia SP - KM nguoi ban; khong gom phi VC, khong tru tro gia san)","tu_ngay":"2026-07-03","den_ngay":null,"nguon":"https://seller-vn.tiktok.com/university/essay?knowledge_id=3396736626312961 + PDF bieu phi hoa hong (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Cot Marketplace trong PDF tren trang chinh thuc; da gom thue VN. Gop theo nganh cap 1: min-trung vi-max.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"TikTok Shop","loai_phi":"phi_hoa_hong_nen_tang","nganh":"The thao \u0026 ngoai troi","muc":{"thap":12.0,"cao":15.0,"tran_vnd":null,"trung_vi":12.0,"goc":"12.0-15.0 (trung vi 12.0)"},"don_vi":"% (gia SP - KM nguoi ban; khong gom phi VC, khong tru tro gia san)","tu_ngay":"2026-07-03","den_ngay":null,"nguon":"https://seller-vn.tiktok.com/university/essay?knowledge_id=3396736626312961 + PDF bieu phi hoa hong (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Cot Marketplace trong PDF tren trang chinh thuc; da gom thue VN. Gop theo nganh cap 1: min-trung vi-max.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"TikTok Shop","loai_phi":"phi_hoa_hong_nen_tang","nganh":"Sac dep \u0026 cham soc ca nhan","muc":{"thap":9.5,"cao":16.0,"tran_vnd":null,"trung_vi":15.5,"goc":"9.5-16.0 (trung vi 15.5)"},"don_vi":"% (gia SP - KM nguoi ban; khong gom phi VC, khong tru tro gia san)","tu_ngay":"2026-07-03","den_ngay":null,"nguon":"https://seller-vn.tiktok.com/university/essay?knowledge_id=3396736626312961 + PDF bieu phi hoa hong (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Cot Marketplace trong PDF tren trang chinh thuc; da gom thue VN. Gop theo nganh cap 1: min-trung vi-max.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"TikTok Shop","loai_phi":"phi_hoa_hong_nen_tang","nganh":"Suc khoe","muc":{"thap":14.0,"cao":15.5,"tran_vnd":null,"trung_vi":14.0,"goc":"14.0-15.5 (trung vi 14.0)"},"don_vi":"% (gia SP - KM nguoi ban; khong gom phi VC, khong tru tro gia san)","tu_ngay":"2026-07-03","den_ngay":null,"nguon":"https://seller-vn.tiktok.com/university/essay?knowledge_id=3396736626312961 + PDF bieu phi hoa hong (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Cot Marketplace trong PDF tren trang chinh thuc; da gom thue VN. Gop theo nganh cap 1: min-trung vi-max.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"TikTok Shop","loai_phi":"phi_hoa_hong_nen_tang","nganh":"Me \u0026 Be - san pham be \u0026 thai san","muc":{"thap":9.0,"cao":15.0,"tran_vnd":null,"trung_vi":13.5,"goc":"9.0-15.0 (trung vi 13.5)"},"don_vi":"% (gia SP - KM nguoi ban; khong gom phi VC, khong tru tro gia san)","tu_ngay":"2026-07-03","den_ngay":null,"nguon":"https://seller-vn.tiktok.com/university/essay?knowledge_id=3396736626312961 + PDF bieu phi hoa hong (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Cot Marketplace trong PDF tren trang chinh thuc; da gom thue VN. Gop theo nganh cap 1: min-trung vi-max.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"TikTok Shop","loai_phi":"phi_hoa_hong_nen_tang","nganh":"Me \u0026 Be - thoi trang tre em","muc":{"thap":14.0,"cao":15.0,"tran_vnd":null,"trung_vi":14.5,"goc":"14.0-15.0 (trung vi 14.5)"},"don_vi":"% (gia SP - KM nguoi ban; khong gom phi VC, khong tru tro gia san)","tu_ngay":"2026-07-03","den_ngay":null,"nguon":"https://seller-vn.tiktok.com/university/essay?knowledge_id=3396736626312961 + PDF bieu phi hoa hong (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Cot Marketplace trong PDF tren trang chinh thuc; da gom thue VN. Gop theo nganh cap 1: min-trung vi-max.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"TikTok Shop","loai_phi":"phi_hoa_hong_nen_tang","nganh":"Do choi \u0026 so thich","muc":{"thap":13.0,"cao":15.5,"tran_vnd":null,"trung_vi":null,"goc":"13.0-15.5 (trung vi 13.0-14.5 tuy nhom)"},"don_vi":"% (gia SP - KM nguoi ban; khong gom phi VC, khong tru tro gia san)","tu_ngay":"2026-07-03","den_ngay":null,"nguon":"https://seller-vn.tiktok.com/university/essay?knowledge_id=3396736626312961 + PDF bieu phi hoa hong (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Cot Marketplace trong PDF tren trang chinh thuc; da gom thue VN. Gop theo nganh cap 1: min-trung vi-max.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"TikTok Shop","loai_phi":"phi_hoa_hong_nen_tang","nganh":"Nha cua - do dung gia dinh (Home Supplies)","muc":{"thap":8.5,"cao":15.0,"tran_vnd":null,"trung_vi":14.5,"goc":"8.5-15.0 (trung vi 14.5)"},"don_vi":"% (gia SP - KM nguoi ban; khong gom phi VC, khong tru tro gia san)","tu_ngay":"2026-07-03","den_ngay":null,"nguon":"https://seller-vn.tiktok.com/university/essay?knowledge_id=3396736626312961 + PDF bieu phi hoa hong (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Cot Marketplace trong PDF tren trang chinh thuc; da gom thue VN. Gop theo nganh cap 1: min-trung vi-max.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"TikTok Shop","loai_phi":"phi_hoa_hong_nen_tang","nganh":"Nha cua - do bep (Kitchenware)","muc":{"thap":12.5,"cao":15.0,"tran_vnd":null,"trung_vi":14.5,"goc":"12.5-15.0 (trung vi 14.5)"},"don_vi":"% (gia SP - KM nguoi ban; khong gom phi VC, khong tru tro gia san)","tu_ngay":"2026-07-03","den_ngay":null,"nguon":"https://seller-vn.tiktok.com/university/essay?knowledge_id=3396736626312961 + PDF bieu phi hoa hong (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Cot Marketplace trong PDF tren trang chinh thuc; da gom thue VN. Gop theo nganh cap 1: min-trung vi-max.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"TikTok Shop","loai_phi":"phi_hoa_hong_nen_tang","nganh":"Nha cua - noi that","muc":{"thap":12.7,"cao":13.2,"tran_vnd":null,"trung_vi":null,"goc":"12.7-13.2"},"don_vi":"% (gia SP - KM nguoi ban; khong gom phi VC, khong tru tro gia san)","tu_ngay":"2026-07-03","den_ngay":null,"nguon":"https://seller-vn.tiktok.com/university/essay?knowledge_id=3396736626312961 + PDF bieu phi hoa hong (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Cot Marketplace trong PDF tren trang chinh thuc; da gom thue VN. Gop theo nganh cap 1: min-trung vi-max.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"TikTok Shop","loai_phi":"phi_hoa_hong_nen_tang","nganh":"Nha cua - cai tao nha cua","muc":{"thap":9.0,"cao":15.0,"tran_vnd":null,"trung_vi":12.5,"goc":"9.0-15.0 (trung vi 12.5)"},"don_vi":"% (gia SP - KM nguoi ban; khong gom phi VC, khong tru tro gia san)","tu_ngay":"2026-07-03","den_ngay":null,"nguon":"https://seller-vn.tiktok.com/university/essay?knowledge_id=3396736626312961 + PDF bieu phi hoa hong (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Cot Marketplace trong PDF tren trang chinh thuc; da gom thue VN. Gop theo nganh cap 1: min-trung vi-max.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"TikTok Shop","loai_phi":"phi_hoa_hong_nen_tang","nganh":"Nha cua - thu cung","muc":{"thap":12.5,"cao":13.0,"tran_vnd":null,"trung_vi":null,"goc":"12.5-13.0"},"don_vi":"% (gia SP - KM nguoi ban; khong gom phi VC, khong tru tro gia san)","tu_ngay":"2026-07-03","den_ngay":null,"nguon":"https://seller-vn.tiktok.com/university/essay?knowledge_id=3396736626312961 + PDF bieu phi hoa hong (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Cot Marketplace trong PDF tren trang chinh thuc; da gom thue VN. Gop theo nganh cap 1: min-trung vi-max.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"TikTok Shop","loai_phi":"phi_hoa_hong_nen_tang","nganh":"Nha cua - ung dung \u0026 dung cu (Tools \u0026 Hardware)","muc":{"thap":12.5,"cao":14.5,"tran_vnd":null,"trung_vi":14.5,"goc":"12.5-14.5 (trung vi 14.5)"},"don_vi":"% (gia SP - KM nguoi ban; khong gom phi VC, khong tru tro gia san)","tu_ngay":"2026-07-03","den_ngay":null,"nguon":"https://seller-vn.tiktok.com/university/essay?knowledge_id=3396736626312961 + PDF bieu phi hoa hong (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Cot Marketplace trong PDF tren trang chinh thuc; da gom thue VN. Gop theo nganh cap 1: min-trung vi-max.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"TikTok Shop","loai_phi":"phi_hoa_hong_nen_tang","nganh":"Oto \u0026 xe may","muc":{"thap":1.5,"cao":14.5,"tran_vnd":null,"trung_vi":14.5,"goc":"1.5-14.5 (trung vi 14.5)"},"don_vi":"% (gia SP - KM nguoi ban; khong gom phi VC, khong tru tro gia san)","tu_ngay":"2026-07-03","den_ngay":null,"nguon":"https://seller-vn.tiktok.com/university/essay?knowledge_id=3396736626312961 + PDF bieu phi hoa hong (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Cot Marketplace trong PDF tren trang chinh thuc; da gom thue VN. Gop theo nganh cap 1: min-trung vi-max.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"TikTok Shop","loai_phi":"phi_hoa_hong_nen_tang","nganh":"Dien tu - may tinh \u0026 van phong","muc":{"thap":2.0,"cao":11.5,"tran_vnd":null,"trung_vi":7.5,"goc":"2.0-11.5 (trung vi 7.5)"},"don_vi":"% (gia SP - KM nguoi ban; khong gom phi VC, khong tru tro gia san)","tu_ngay":"2026-07-03","den_ngay":null,"nguon":"https://seller-vn.tiktok.com/university/essay?knowledge_id=3396736626312961 + PDF bieu phi hoa hong (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Cot Marketplace trong PDF tren trang chinh thuc; da gom thue VN. Gop theo nganh cap 1: min-trung vi-max.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"TikTok Shop","loai_phi":"phi_hoa_hong_nen_tang","nganh":"Dien tu - dien thoai \u0026 thiet bi dien tu","muc":{"thap":2.0,"cao":14.0,"tran_vnd":null,"trung_vi":10.5,"goc":"2.0-14.0 (trung vi 10.5)"},"don_vi":"% (gia SP - KM nguoi ban; khong gom phi VC, khong tru tro gia san)","tu_ngay":"2026-07-03","den_ngay":null,"nguon":"https://seller-vn.tiktok.com/university/essay?knowledge_id=3396736626312961 + PDF bieu phi hoa hong (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Cot Marketplace trong PDF tren trang chinh thuc; da gom thue VN. Gop theo nganh cap 1: min-trung vi-max.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"TikTok Shop","loai_phi":"phi_hoa_hong_nen_tang","nganh":"Dien tu - gia dung","muc":{"thap":6.5,"cao":12.5,"tran_vnd":null,"trung_vi":9.5,"goc":"6.5-12.5 (trung vi 9.5)"},"don_vi":"% (gia SP - KM nguoi ban; khong gom phi VC, khong tru tro gia san)","tu_ngay":"2026-07-03","den_ngay":null,"nguon":"https://seller-vn.tiktok.com/university/essay?knowledge_id=3396736626312961 + PDF bieu phi hoa hong (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Cot Marketplace trong PDF tren trang chinh thuc; da gom thue VN. Gop theo nganh cap 1: min-trung vi-max.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"TikTok Shop","loai_phi":"phi_hoa_hong_nen_tang","nganh":"Thuc pham \u0026 do uong","muc":{"thap":8.5,"cao":13.5,"tran_vnd":null,"trung_vi":12.0,"goc":"8.5-13.5 (trung vi 12.0)"},"don_vi":"% (gia SP - KM nguoi ban; khong gom phi VC, khong tru tro gia san)","tu_ngay":"2026-07-03","den_ngay":null,"nguon":"https://seller-vn.tiktok.com/university/essay?knowledge_id=3396736626312961 + PDF bieu phi hoa hong (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Cot Marketplace trong PDF tren trang chinh thuc; da gom thue VN. Gop theo nganh cap 1: min-trung vi-max.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"TikTok Shop","loai_phi":"phi_hoa_hong_nen_tang","nganh":"Sach, tap chi","muc":{"thap":8.5,"cao":14.0,"tran_vnd":null,"trung_vi":13.5,"goc":"8.5-14.0 (trung vi 13.5)"},"don_vi":"% (gia SP - KM nguoi ban; khong gom phi VC, khong tru tro gia san)","tu_ngay":"2026-07-03","den_ngay":null,"nguon":"https://seller-vn.tiktok.com/university/essay?knowledge_id=3396736626312961 + PDF bieu phi hoa hong (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Cot Marketplace trong PDF tren trang chinh thuc; da gom thue VN. Gop theo nganh cap 1: min-trung vi-max.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"TikTok Shop","loai_phi":"phi_giao_dich","nganh":"Tat ca","muc":{"thap":6.0,"cao":6.0,"tran_vnd":null,"trung_vi":null,"goc":"6.0"},"don_vi":"% x (khach tra + tro gia san - hoan tien khach)","tu_ngay":"2026-05-09","den_ngay":null,"nguon":"https://seller-vn.tiktok.com/university/essay?knowledge_id=753295858337537 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Cong thuc hien hanh tu 01/04/2026; ty le 6% ap dung don tao sau 00:00 09/05/2026 (truoc do 5%). Da gom thue VN.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"TikTok Shop","loai_phi":"phi_giao_dich","nganh":"Tat ca","muc":{"thap":5.0,"cao":5.0,"tran_vnd":null,"trung_vi":null,"goc":"5"},"don_vi":"% x (khach tra + tro gia san - hoan tien khach)","tu_ngay":null,"den_ngay":"2026-05-08","nguon":"https://seller-vn.tiktok.com/university/essay?knowledge_id=753295858337537 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Mức cũ suy từ ghi chú: Cong thuc hien hanh tu 01/04/2026; ty le 6% ap dung don tao sau 00:00 09/05/2026 (truoc do 5%). Da gom thue VN.","canh_bao":["mức cũ lấy từ cột ghi_chu; không rõ ngày bắt đầu của mức cũ"],"suy_tu_ghi_chu":true},{"san":"TikTok Shop","loai_phi":"giam_phi_giao_dich_theo_ads","nganh":"Tat ca","muc":{"thap":0.0,"cao":0.0,"tran_vnd":null,"trung_vi":null,"goc":"0 / 0.5 / 0.7 / 1.0 / 1.2 / 1.5"},"don_vi":"diem % (theo ads take rate 30 ngay \u003c4 / 4-7 / 7-10 / 10-15 / 15-20 / \u003e=20%)","tu_ngay":"2026-10-21","den_ngay":null,"nguon":"https://seller-vn.tiktok.com/university/essay?knowledge_id=753295858337537 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Khong cong don giua cac bac. Nen chi xet khi co chay quang cao; khong coi la uu dai co dinh.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"TikTok Shop","loai_phi":"phi_xu_ly_don_hang","nganh":"Tat ca","muc":{"thap":3000.0,"cao":3000.0,"tran_vnd":null,"trung_vi":null,"goc":"3000"},"don_vi":"VND/don giao thanh cong","tu_ngay":"2025-10-27","den_ngay":null,"nguon":"https://seller-vn.tiktok.com/university/essay?knowledge_id=2968734088120080 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Da gom thue; KHONG hoan lai neu don da giao roi moi hoan/tra.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"TikTok Shop","loai_phi":"phi_dich_vu_Voucher_Extra_VXP","nganh":"Tat ca (neu tham gia)","muc":{"thap":5.0,"cao":5.0,"tran_vnd":50000.0,"trung_vi":null,"goc":"5.0 (toi da 50000/san pham)"},"don_vi":"% gia SP chua tru khuyen mai san","tu_ngay":"2026-08-21","den_ngay":null,"nguon":"https://seller-vn.tiktok.com/university/essay?knowledge_id=5776954021037841 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Blog ghi 4% (TB) mau thuan - lay theo trang chinh thuc. VXP+ cong them +1.5 den +4.0 diem % (tran 30000-100000/sp); khong thu voi sua cong thuc \u003c2 tuoi, vang, hang Nha nuoc quan ly.","canh_bao":["ngày '2026-08-21 (trang cap nhat)' là ngày cập nhật trang, chưa chắc là ngày hiệu lực thật"],"suy_tu_ghi_chu":false},{"san":"TikTok Shop","loai_phi":"uu_dai_hoa_hong_shop_moi","nganh":"Shop tao 01/01-26/06/2026","muc":null,"don_vi":"","tu_ngay":"2026-07-03","den_ngay":"2026-09-30","nguon":"https://seller-vn.tiktok.com/university/essay?knowledge_id=3396736626312961 + PDF bieu phi hoa hong (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"DA HET HAN 30/09/2026. Uu dai moi sau 10/2026: CHUA XAC MINH.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"TikTok Shop","loai_phi":"hoa_hong_nha_sang_tao_affiliate","nganh":"Tat ca (neu tham gia)","muc":null,"don_vi":"% gia SP","tu_ngay":null,"den_ngay":null,"nguon":"https://seller-vn.tiktok.com/university/essay?knowledge_id=3747225037670161 (tra 12/11/2026)","do_tin_cay":"TB","ghi_chu":"Ty le hoa hong thuong (Open Collaboration) do nguoi ban dat, TikTok chi goi y; creator nhan tung don mot trong hai (thuong / Shop Ads). Muc san/tran CHUA XAC MINH. Hoa hong tra sau khi don duoc doi soat.","canh_bao":["ngày bắt đầu hiệu lực CHƯA XÁC MINH (ô trống trong bảng phí)"],"suy_tu_ghi_chu":false},{"san":"TikTok Shop","loai_phi":"thue_tren_phi_nen_tang","nganh":"Tat ca","muc":null,"don_vi":"%","tu_ngay":"2025-07-01","den_ngay":null,"nguon":"https://seller-vn.tiktok.com/university/essay?knowledge_id=6837804173133569 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Phi da gom thue VN. Neu nguoi ban la 'to chuc co MST da duoc xac minh' thi TikTok chi thu phan CHUA thue, nguoi ban tu ke khai nop ho. Ho kinh doanh co thuoc dien nay hay khong: CHUA XAC MINH - hoi ke toan. Khac Shopee (8%).","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"Chung (san khau tru)","loai_phi":"thue_khau_tru_GTGT","nganh":"Hang hoa (ca nhan cu tru)","muc":{"thap":1.0,"cao":1.0,"tran_vnd":null,"trung_vi":null,"goc":"1.0"},"don_vi":"% doanh thu tinh thue (gia hang - giam gia nguoi ban)","tu_ngay":"2025-07-01","den_ngay":null,"nguon":"https://banhang.shopee.vn/edu/article/24233 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Nghi dinh 117/2025/ND-CP; khau tru moi don khong phan biet tong doanh thu nam.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"Chung (san khau tru)","loai_phi":"thue_khau_tru_TNCN","nganh":"Hang hoa (ca nhan cu tru)","muc":{"thap":0.5,"cao":0.5,"tran_vnd":null,"trung_vi":null,"goc":"0.5"},"don_vi":"% doanh thu tinh thue","tu_ngay":"2025-07-01","den_ngay":null,"nguon":"https://banhang.shopee.vn/edu/article/24233 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Dich vu: GTGT 5% + TNCN 2%. TikTok xac nhan ca hai thue theo vi du 1%/0.5% (T_WH).","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"Chung (san khau tru)","loai_phi":"doanh_thu_tinh_thue","nganh":"Hang hoa","muc":null,"don_vi":"","tu_ngay":"2025-07-01","den_ngay":null,"nguon":"https://banhang.shopee.vn/edu/article/24233 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Khong tinh phi van chuyen; hoan hang -\u003e san hoan thue tuong ung.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"Shopee","loai_phi":"doi_soat_ghi_nhan_doanh_thu","nganh":"Tat ca","muc":null,"don_vi":"","tu_ngay":"2024-03-29","den_ngay":null,"nguon":"https://banhang.shopee.vn/edu/article/234 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Don nghi gian lan: toi da 15 ngay. Rut tien: tu dong 2 lan/thang (thu Ba tuan 1 \u0026 3) hoac 1 lan/thang ngay 15, hoac thu cong bat ky luc; tien ve NH trong 24h, co the 3-4 ngay lam viec.","canh_bao":[],"suy_tu_ghi_chu":false},{"san":"TikTok Shop","loai_phi":"doi_soat_chu_ky","nganh":"Shop da qua giai doan dieu chinh shop moi","muc":{"thap":3.0,"cao":3.0,"tran_vnd":null,"trung_vi":null,"goc":"3"},"don_vi":"ngay lich sau giao thanh cong","tu_ngay":"2026-06-09","den_ngay":null,"nguon":"https://seller-vn.tiktok.com/university/essay?knowledge_id=6091769578850065 (tra 12/11/2026)","do_tin_cay":"CAO","ghi_chu":"Shop moi: 8 ngay; Mall du dieu kien: 1 ngay; bi danh gia rui ro: 15 ngay, toi da 30 ngay. Cap nhat 07/09/2026. Tien ve NH sau rut: 4-5 ngay lam viec (nguon cu, THAP).","canh_bao":[],"suy_tu_ghi_chu":false}]}</script>
+<script id="loi-tinh">
+/* Lõi máy tính lợi nhuận mỗi đơn — bản JS chép 1:1 từ apps/finance/taichinh/tinh_loi_nhuan.py (P4).
+ * KHÔNG sửa công thức ở đây trước khi P4 sửa bản Python: tools/kiem-khop.py so hai bản, lệch > 1 đ = HỎNG.
+ * Bảng phí được Python (taichinh.bang_phi) đọc + tách sẵn, đóng gói vào app bởi tools/dong-goi-app.py.
+ * Không gọi mạng, không đọc / ghi gì ngoài tham số truyền vào.
+ */
+(function (goc) {
+  "use strict";
+
+  var DONG_KHONG_DAM_BAO = "Số đầu vào (giá vốn, giá bán, tỷ lệ hoàn, quảng cáo…) là GIẢ ĐỊNH do người dùng nhập. " +
+    "Không phải khuyến nghị đầu tư / không đảm bảo lợi nhuận.";
+
+  var CANH_BAO_HA_TANG = "Phí hạ tầng Shopee 3.000đ/đơn: nguồn chính thức (Shopee Uni bài 25329) + Sapo + Báo Pháp Luật ghi " +
+    "áp dụng; MỘT nguồn (ai-hay) nói CHỈ áp dụng Shopee Mall → mâu thuẫn, chưa kiểm trên Kênh Người Bán. " +
+    "Công cụ vẫn tính 3.000đ (thận trọng).";
+
+  var CHE_DO = ["thap", "giua", "cao"];
+
+  var SAN = {
+    shopee: {
+      ten: "Shopee",
+      phi_nganh: "phi_co_dinh",
+      phi_gd: ["phi_xu_ly_giao_dich", "Tat ca (nguoi ban thuong)"],
+      phi_don: ["phi_ha_tang", "Tat ca"],
+      voucher_san: ["phi_dich_vu_goi_voucher_xtra", "Tat ca (neu tham gia)"],
+      ship_tra: ["phi_van_chuyen_tra_hang_nguoi_ban_chiu", "Tat ca"],
+      phi_don_mat_khi_hoan: false
+    },
+    tiktok: {
+      ten: "TikTok Shop",
+      phi_nganh: "phi_hoa_hong_nen_tang",
+      nganh_mac_dinh: "Muc mac dinh (nganh cap 3 khong liet ke)",
+      phi_gd: ["phi_giao_dich", "Tat ca"],
+      phi_don: ["phi_xu_ly_don_hang", "Tat ca"],
+      voucher_san: ["phi_dich_vu_Voucher_Extra_VXP", "Tat ca (neu tham gia)"],
+      ship_tra: null,
+      phi_don_mat_khi_hoan: true
+    }
+  };
+
+  function ThieuDuLieu(msg) {
+    var e = new Error(msg);
+    e.name = "ThieuDuLieu";
+    e.thieuDuLieu = true;
+    return e;
+  }
+
+  function laNone(v) { return v === null || v === undefined; }
+
+  // ---- giống Python ----
+  function boDau(s) {
+    s = String(s).replace(/đ/g, "d").replace(/Đ/g, "D");
+    s = s.normalize("NFD").replace(/\p{Mn}/gu, "");
+    return s.toLowerCase().split(/\s+/).filter(function (x) { return x; }).join(" ");
+  }
+
+  // round(x, n) của Python: làm tròn đúng giá trị nhị phân, hòa thì về số chẵn
+  function pyRound(x, n) {
+    if (!isFinite(x)) return x;
+    var am = x < 0 || Object.is(x, -0);
+    var a = Math.abs(x);
+    var s = a.toFixed(n); // toFixed: gần nhất theo giá trị CHÍNH XÁC của số nhị phân; hòa thì lấy số lớn hơn
+    // Hòa thật sự chỉ khi phần thập phân chính xác sau chữ số n là "5000…": khi đó Python lấy số chẵn.
+    var day = a.toFixed(80);
+    var cham = day.indexOf(".");
+    var duoi = day.slice(cham + 1 + n);
+    if (/^50*$/.test(duoi)) {
+      var dau = day.slice(0, cham + 1 + n).replace(".", "");
+      var cuoi = Number(dau.charAt(dau.length - 1));
+      if (cuoi % 2 === 0) s = n > 0 ? day.slice(0, cham + 1 + n) : day.slice(0, cham);
+    }
+    var v = Number(s);
+    return am ? -v : v;
+  }
+
+  // f"{x:g}" của Python (đủ cho các tỷ lệ % ở đây)
+  function fmtG(x) {
+    if (x === 0) return Object.is(x, -0) ? "-0" : "0";
+    var v = Number(x.toPrecision(6));
+    var e = Math.floor(Math.log10(Math.abs(v)));
+    if (e < -4 || e >= 6) {
+      var t = v.toExponential().replace(/\.?0+e/, "e");
+      return t.replace(/e([+-])(\d)$/, "e$10$2");
+    }
+    return String(v);
+  }
+
+  // sum() của Python 3.12+ (cộng có bù — Neumaier)
+  function pySum(ds) {
+    var s = 0, c = 0;
+    for (var i = 0; i < ds.length; i++) {
+      var x = ds[i];
+      var t = s + x;
+      if (Math.abs(s) >= Math.abs(x)) c += (s - t) + x; else c += (x - t) + s;
+      s = t;
+    }
+    if (c && isFinite(c)) s += c;
+    return s;
+  }
+
+  // ---- bảng phí (đã tách sẵn bởi Python) ----
+  function chonMuc(muc, cheDo) {
+    if (CHE_DO.indexOf(cheDo) < 0) {
+      var e = new Error("che_do phải là một trong ('thap', 'giua', 'cao'), nhận '" + cheDo + "'");
+      e.name = "ValueError";
+      throw e;
+    }
+    if (cheDo === "thap") return muc.thap;
+    if (cheDo === "cao") return muc.cao;
+    return (muc.thap + muc.cao) / 2;
+  }
+
+  function laKhoang(muc) { return muc.thap !== muc.cao; }
+
+  function apDung(d, ngay) {
+    if (d.tu_ngay && ngay < d.tu_ngay) return false;
+    if (d.den_ngay && ngay > d.den_ngay) return false;
+    return true;
+  }
+
+  function BangPhi(duLieu) {
+    if (!duLieu || !duLieu.dong) throw ThieuDuLieu("không thấy bảng phí trong app");
+    this.dong = duLieu.dong;
+    this.nguon_tep = duLieu.nguon_tep;
+    this.sha256 = duLieu.sha256;
+  }
+
+  BangPhi.prototype.nganhCua = function (san, loaiPhi) {
+    var ra = [], bs = boDau(san);
+    this.dong.forEach(function (d) {
+      if (boDau(d.san) === bs && d.loai_phi === loaiPhi && ra.indexOf(d.nganh) < 0) ra.push(d.nganh);
+    });
+    return ra;
+  };
+
+  BangPhi.prototype.khopNganh = function (san, loaiPhi, nganh) {
+    var ds = this.nganhCua(san, loaiPhi);
+    if (!ds.length) throw ThieuDuLieu("bảng phí không có '" + loaiPhi + "' cho sàn '" + san + "'");
+    var q = boDau(nganh);
+    for (var i = 0; i < ds.length; i++) if (boDau(ds[i]) === q) return ds[i];
+    var con = ds.filter(function (n) { return boDau(n).indexOf(q) >= 0; });
+    if (con.length === 1) return con[0];
+    if (!con.length) throw ThieuDuLieu("không có ngành '" + nganh + "' cho " + san + "/" + loaiPhi + ". Ngành có: " + ds.join(" | "));
+    throw ThieuDuLieu("ngành '" + nganh + "' khớp nhiều dòng: " + con.join(" | ") + " — gõ cụ thể hơn");
+  };
+
+  BangPhi.prototype.tra = function (san, loaiPhi, nganh, ngay) {
+    var n = this.khopNganh(san, loaiPhi, nganh), bs = boDau(san);
+    var uv = this.dong.filter(function (d) {
+      return boDau(d.san) === bs && d.loai_phi === loaiPhi && d.nganh === n && apDung(d, ngay);
+    });
+    if (!uv.length) throw ThieuDuLieu("không có mức '" + loaiPhi + "' (" + san + ", " + n + ") hiệu lực ngày " + ngay);
+    uv = uv.map(function (d, i) { return { d: d, i: i }; });
+    uv.sort(function (a, b) {
+      var ka = a.d.tu_ngay || "0000-00-00", kb = b.d.tu_ngay || "0000-00-00";
+      if (ka !== kb) return ka < kb ? -1 : 1;
+      var ba = a.d.suy_tu_ghi_chu ? 0 : 1, bb = b.d.suy_tu_ghi_chu ? 0 : 1; // not suy_tu_ghi_chu
+      if (ba !== bb) return ba - bb;
+      return a.i - b.i;
+    });
+    var d = uv[uv.length - 1].d;
+    if (!d.muc) throw ThieuDuLieu("mức '" + loaiPhi + "' (" + san + ", " + n + ") CHƯA XÁC MINH trong bảng phí");
+    return d;
+  };
+
+  BangPhi.prototype.dongDau = function (san, loaiPhi) {
+    var bs = boDau(san);
+    for (var i = 0; i < this.dong.length; i++) {
+      var d = this.dong[i];
+      if (boDau(d.san) === bs && d.loai_phi === loaiPhi && !d.suy_tu_ghi_chu) return d;
+    }
+    return null;
+  };
+
+  // ---- máy tính ----
+  function chuanSan(san) {
+    var s = boDau(san).replace(/ /g, "");
+    if (s.indexOf("shopee") === 0) return "shopee";
+    if (s.indexOf("tiktok") === 0) return "tiktok";
+    throw ThieuDuLieu("sàn '" + san + "' chưa hỗ trợ (chỉ Shopee, TikTok Shop)");
+  }
+
+  var MAC_DINH = {
+    giam_gia_shop: 0, dong_goi: 0, ship_shop_chiu: 0, tham_gia_voucher_san: false, hoa_hong_aff_shop_tra: 0,
+    quang_cao_pct: 0, ty_le_hoan: 0, ship_tra_hang: null, ty_le_hong_hang_hoan: 30, thue_gtgt: null,
+    thue_tncn: null, che_do_khoang: "cao", phi_nganh_tu_nhap: null, shop_moi_mien_phi_co_dinh: false,
+    tinh_phi_ha_tang: true, hoa_hong_aff_nhan: null, thue_aff: 0
+  };
+
+  function homNay() {
+    var d = new Date();
+    var p = function (x) { return (x < 10 ? "0" : "") + x; };
+    return d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate());
+  }
+
+  function dauVao(o) {
+    var dv = {};
+    Object.keys(MAC_DINH).forEach(function (k) { dv[k] = MAC_DINH[k]; });
+    Object.keys(o || {}).forEach(function (k) { if (o[k] !== undefined) dv[k] = o[k]; });
+    if (laNone(dv.ngay_ban) || dv.ngay_ban === "") dv.ngay_ban = homNay();
+    if (laNone(dv.nganh)) dv.nganh = "";
+    return dv;
+  }
+
+  function hieuLuc(d) {
+    if (d.tu_ngay && d.den_ngay) return d.tu_ngay + " → " + d.den_ngay;
+    if (d.tu_ngay) return "từ " + d.tu_ngay;
+    if (d.den_ngay) return "đến " + d.den_ngay;
+    return "CHƯA XÁC MINH";
+  }
+
+  function ghiCanhBao(cb, ten, d) {
+    d.canh_bao.forEach(function (c) { cb.push(ten + ": " + c); });
+    if (String(d.do_tin_cay).toUpperCase() !== "CAO") cb.push(ten + ": độ tin cậy " + (d.do_tin_cay || "không ghi"));
+  }
+
+  function MayTinh(bangPhi) { this.bp = bangPhi; }
+
+  MayTinh.prototype._tyLe = function (sanCsv, loai, nganh, ngay, cheDo, ten, cb) {
+    var d = this.bp.tra(sanCsv, loai, nganh, ngay);
+    var v = chonMuc(d.muc, cheDo);
+    if (laKhoang(d.muc)) {
+      cb.push(ten + ": bảng phí ghi khoảng " + fmtG(d.muc.thap) + "–" + fmtG(d.muc.cao) + "% (ngành '" + d.nganh + "'), " +
+        "đang dùng mức '" + cheDo + "' = " + fmtG(v) + "%. Tra PDF ngành cấp 3 để có mức chính xác.");
+    }
+    ghiCanhBao(cb, ten, d);
+    return [v, d];
+  };
+
+  MayTinh.prototype.tinh = function (vao, timHoaVon) {
+    if (timHoaVon === undefined) timHoaVon = true;
+    var dv = dauVao(vao);
+    var cb = [];
+    var ma = chuanSan(dv.san);
+    var cfg = SAN[ma];
+    var sanCsv = cfg.ten;
+    var ngay = dv.ngay_ban;
+    if (laNone(dv.gia_ban) || laNone(dv.gia_von)) throw ThieuDuLieu("thiếu giá bán hoặc giá vốn");
+    var am = [["giá bán", dv.gia_ban], ["giá vốn", dv.gia_von], ["giảm giá shop", dv.giam_gia_shop],
+      ["đóng gói", dv.dong_goi], ["ship shop chịu", dv.ship_shop_chiu]];
+    for (var i = 0; i < am.length; i++) if (am[i][1] < 0) throw ThieuDuLieu(am[i][0] + " không được âm");
+    var pt = [["tỷ lệ hoàn", dv.ty_le_hoan], ["quảng cáo %", dv.quang_cao_pct],
+      ["tỷ lệ hỏng hàng hoàn", dv.ty_le_hong_hang_hoan], ["hoa hồng affiliate", dv.hoa_hong_aff_shop_tra]];
+    for (i = 0; i < pt.length; i++) {
+      if (!(0 <= pt[i][1] && pt[i][1] <= 100)) throw ThieuDuLieu(pt[i][0] + " phải trong 0–100 (%), nhận " + soPy(pt[i][1]));
+    }
+
+    var rev = dv.gia_ban - dv.giam_gia_shop;
+    if (rev <= 0) throw ThieuDuLieu("giá bán sau giảm giá shop phải > 0");
+
+    // ---- phí ngành ----
+    var nganhTra = dv.nganh;
+    if (ma === "tiktok" && !dv.nganh.trim()) nganhTra = cfg.nganh_mac_dinh;
+    var fPct, dF, tenNganh, r_;
+    if (!laNone(dv.phi_nganh_tu_nhap)) {
+      fPct = dv.phi_nganh_tu_nhap;
+      dF = null;
+      tenNganh = dv.nganh;
+      cb.push("Phí ngành do người dùng nhập tay (" + fmtG(fPct) + "%) — không lấy từ bảng phí");
+    } else {
+      r_ = this._tyLe(sanCsv, cfg.phi_nganh, nganhTra, ngay, dv.che_do_khoang, "Phí ngành", cb);
+      fPct = r_[0]; dF = r_[1];
+      tenNganh = dF.nganh;
+    }
+    if (ma === "shopee" && dv.shop_moi_mien_phi_co_dinh) {
+      var dUu = this.bp.dongDau("Shopee", "uu_dai_nguoi_ban_moi");
+      if (dUu && apDung(dUu, ngay)) {
+        fPct = 0.0;
+        cb.push("Đang áp dụng miễn phí cố định shop mới (30 ngày, tối đa 200 đơn thành công, sản phẩm " +
+          "đầu tiên đăng từ 01/11/2026). Hết ưu đãi thì lợi nhuận GIẢM — chạy lại không có cờ này.");
+      } else {
+        cb.push("Cờ miễn phí cố định shop mới bị bỏ qua: ngày bán trước 01/11/2026");
+      }
+    }
+
+    var chiPhi = [];
+    function them(ten, soTien, tyLe, d) {
+      chiPhi.push({
+        ten: ten, so_tien: pyRound(soTien, 2), ty_le: laNone(tyLe) ? null : tyLe,
+        nguon: d ? d.nguon : "người dùng nhập (GIẢ ĐỊNH)",
+        do_tin_cay: d ? d.do_tin_cay : "", hieu_luc: d ? hieuLuc(d) : ""
+      });
+    }
+
+    them("Giá vốn", dv.gia_von);
+    if (dv.dong_goi) them("Đóng gói", dv.dong_goi);
+    if (dv.ship_shop_chiu) them("Ship shop chịu", dv.ship_shop_chiu);
+    them("Phí ngành (" + cfg.phi_nganh + ")", fPct / 100 * rev, fPct, dF);
+
+    r_ = this._tyLe(sanCsv, cfg.phi_gd[0], cfg.phi_gd[1], ngay, "cao", "Phí giao dịch", cb);
+    var tPct = r_[0], dT = r_[1];
+    them("Phí giao dịch (" + cfg.phi_gd[0] + ")", tPct / 100 * rev, tPct, dT);
+
+    var dH = this.bp.tra(sanCsv, cfg.phi_don[0], cfg.phi_don[1], ngay);
+    ghiCanhBao(cb, "Phí mỗi đơn", dH);
+    var H = dH.muc.cao;
+    if (ma === "shopee") {
+      if (dv.tinh_phi_ha_tang) {
+        cb.push(CANH_BAO_HA_TANG);
+      } else {
+        cb.push("Đang BỎ phí hạ tầng 3.000đ (kịch bản 'chỉ Mall mới thu' — CHƯA XÁC MINH, không thận trọng)");
+        H = 0.0;
+      }
+    }
+    them("Phí mỗi đơn (" + cfg.phi_don[0] + ")", H, null, dH);
+
+    var vTien = 0.0;
+    if (dv.tham_gia_voucher_san) {
+      r_ = this._tyLe(sanCsv, cfg.voucher_san[0], cfg.voucher_san[1], ngay, "cao", "Voucher sàn", cb);
+      var vPct = r_[0], dV = r_[1];
+      vTien = vPct / 100 * rev;
+      if (!laNone(dV.muc.tran_vnd)) vTien = Math.min(vTien, dV.muc.tran_vnd);
+      them("Voucher sàn (" + cfg.voucher_san[0] + ")", vTien, vPct, dV);
+      if (ma === "shopee") cb.push("Voucher Xtra: cơ sở tính (trước/sau KM người bán) CHƯA XÁC MINH — công cụ tính trên Rev");
+    }
+
+    var aTien = dv.hoa_hong_aff_shop_tra / 100 * rev;
+    if (aTien) them("Hoa hồng affiliate shop trả", aTien, dv.hoa_hong_aff_shop_tra);
+
+    var dGtgt = this.bp.tra("Chung (san khau tru)", "thue_khau_tru_GTGT", "Hang hoa", ngay);
+    var dTncn = this.bp.tra("Chung (san khau tru)", "thue_khau_tru_TNCN", "Hang hoa", ngay);
+    var g = laNone(dv.thue_gtgt) ? dGtgt.muc.cao : dv.thue_gtgt;
+    var p = laNone(dv.thue_tncn) ? dTncn.muc.cao : dv.thue_tncn;
+    var kPct = g + p;
+    var kTien = kPct / 100 * rev;
+    them("Thuế sàn khấu trừ (GTGT " + fmtG(g) + "% + TNCN " + fmtG(p) + "%)", kTien, kPct, dGtgt);
+
+    var tong = pySum(chiPhi.map(function (c) { return c.so_tien; }));
+    var cm = rev - tong;
+
+    // ---- hoàn hàng ----
+    var r = dv.ty_le_hoan / 100;
+    var dd = dv.ty_le_hong_hang_hoan / 100;
+    var sret;
+    if (!laNone(dv.ship_tra_hang)) {
+      sret = dv.ship_tra_hang;
+    } else if (cfg.ship_tra) {
+      sret = this.bp.tra(sanCsv, cfg.ship_tra[0], cfg.ship_tra[1], ngay).muc.cao;
+    } else {
+      sret = 0.0;
+      if (r > 0) cb.push("TikTok: phí ship trả hàng shop chịu CHƯA XÁC MINH trong bảng phí — đang tính 0đ; " +
+        "nhập --ship-tra-hang để thận trọng");
+    }
+    var chiHoan = dv.dong_goi + dv.ship_shop_chiu + sret + dd * dv.gia_von;
+    if (cfg.phi_don_mat_khi_hoan) chiHoan += H;
+    if (r > 0) cb.push("Hoàn hàng: tỷ lệ hoàn " + fmtG(dv.ty_le_hoan) + "% và hỏng " + fmtG(dv.ty_le_hong_hang_hoan) + "% là GIẢ ĐỊNH " +
+      "(tỷ lệ hoàn điển hình CHƯA XÁC MINH)");
+    var lnTruoc = (1 - r) * cm - r * chiHoan;
+    var qc = dv.quang_cao_pct / 100 * rev;
+    var ln = lnTruoc - qc;
+
+    var roas = lnTruoc > 0 ? rev / lnTruoc : null;
+    if (roas === null) cb.push("LỖ ngay cả trước quảng cáo → không có ROAS hòa vốn; không nên chạy quảng cáo SKU này");
+
+    var giaHv = timHoaVon ? this._giaHoaVon(dv, true) : null;
+    var giaHvTqc = timHoaVon ? this._giaHoaVon(dv, false) : null;
+
+    var dVat = this.bp.dongDau("Shopee", "GTGT_tren_phi_san");
+    if (dVat && dVat.den_ngay && ngay > dVat.den_ngay) {
+      cb.push("Ngày bán sau " + dVat.den_ngay + ": GTGT 8% trên phí sàn hết hạn; nếu về 10% phí đã gồm " +
+        "thuế có thể tăng ~×1,10/1,08 (+1,85% tương đối) — CHƯA XÁC MINH, cần bảng phí v2");
+    }
+    if (ma === "tiktok") cb.push("TikTok: cơ sở phí giao dịch gồm cả trợ giá sàn + ship khách trả; công cụ tính trên Rev " +
+      "(ship khách trả coi như triệt tiêu)");
+    cb.push("Thuế khấu trừ 1,5%: nếu doanh thu năm ≤ 1 tỷ thì là tiền TẠM khấu trừ, có thể được hoàn — " +
+      "công cụ vẫn trừ (thận trọng). Hỏi kế toán (mục 7 p4-tai-chinh.md)");
+
+    var aff = null;
+    if (!laNone(dv.hoa_hong_aff_nhan)) {
+      var hh = (1 - r) * dv.hoa_hong_aff_nhan / 100 * rev * (1 - dv.thue_aff / 100);
+      var lnAff = hh - qc;
+      aff = {
+        hoa_hong_nhan_pct: dv.hoa_hong_aff_nhan,
+        hoa_hong_ky_vong_moi_don: pyRound(hh, 2),
+        quang_cao: pyRound(qc, 2),
+        ln_affiliate: pyRound(lnAff, 2),
+        roas_hoa_von_affiliate: hh > 0 ? pyRound(rev / hh, 4) : null,
+        von_hang_moi_don_nhap_truc_tiep: dv.gia_von,
+        von_hang_moi_don_affiliate: 0,
+        chenh_lech_nhap_truc_tiep_tru_affiliate: pyRound(ln - lnAff, 2)
+      };
+      cb.push("So sánh affiliate: tỷ lệ hoa hồng nhận là GIẢ ĐỊNH; thuế khấu trừ trên thu nhập affiliate " +
+        "CHƯA XÁC MINH (mặc định 0%, nhập --thue-aff). Hoa hồng chỉ tính cho đơn không hoàn.");
+    }
+
+    return {
+      san: sanCsv, nganh: tenNganh, ngay_ban: ngay, rev: rev, chi_phi: chiPhi, cm: pyRound(cm, 2),
+      chi_phi_moi_don_hoan: pyRound(chiHoan, 2), ln_truoc_qc: pyRound(lnTruoc, 2), quang_cao: pyRound(qc, 2),
+      ln: pyRound(ln, 2), bien_rong: pyRound(ln / rev, 6), roas_hoa_von: roas ? pyRound(roas, 4) : null,
+      gia_hoa_von: giaHv, gia_hoa_von_truoc_qc: giaHvTqc,
+      thue_tam_khau_tru: pyRound((1 - r) * kTien, 2), affiliate: aff, canh_bao: cb,
+      khong_dam_bao: DONG_KHONG_DAM_BAO
+    };
+  };
+
+  MayTinh.prototype._giaHoaVon = function (dv, qcOn) {
+    var lo = dv.giam_gia_shop + 1.0;
+    var hi = Math.max(dv.gia_ban, dv.gia_von, 1000.0) * 2;
+    var self = this;
+    var f = function (P) { return self._ln(dv, P, qcOn); };
+    try {
+      var co = false;
+      for (var i = 0; i < 40; i++) {
+        if (f(hi) > 0) { co = true; break; }
+        hi *= 2;
+      }
+      if (!co) return null;
+      if (f(lo) >= 0) return pyRound(lo, 0);
+      while (hi - lo > 0.5) {
+        var mid = (lo + hi) / 2;
+        if (f(mid) >= 0) hi = mid; else lo = mid;
+      }
+      return pyRound(hi, 0);
+    } catch (e) {
+      if (e && e.thieuDuLieu) return null;
+      throw e;
+    }
+  };
+
+  MayTinh.prototype._ln = function (dv, gia, qcOn) {
+    var x = {};
+    Object.keys(dv).forEach(function (k) { x[k] = dv[k]; });
+    x.gia_ban = gia;
+    x.hoa_hong_aff_nhan = null;
+    x.quang_cao_pct = qcOn ? dv.quang_cao_pct : 0.0;
+    return this.tinh(x, false).ln;
+  };
+
+  // số trong thông báo lỗi: đầu vào luôn là float (như dòng lệnh P4) → Python in 120.0
+  function soPy(v) {
+    if (typeof v === "number" && Number.isInteger(v)) return v.toFixed(1);
+    return String(v);
+  }
+
+  goc.TaiChinh = {
+    BangPhi: BangPhi, MayTinh: MayTinh, ThieuDuLieu: ThieuDuLieu, SAN: SAN, chuanSan: chuanSan, boDau: boDau,
+    pyRound: pyRound, fmtG: fmtG, pySum: pySum, DONG_KHONG_DAM_BAO: DONG_KHONG_DAM_BAO, MAC_DINH: MAC_DINH,
+    homNay: homNay
+  };
+})(typeof globalThis !== "undefined" ? globalThis : this);
+
+</script>
+<script id="giao-dien">
+/* Giao diện app Đào Vàng — đọc ô nhập, gọi TaiChinh, hiện kết quả, lưu localStorage, sao lưu / nhập lại.
+ * Không gọi mạng. Không lưu dữ liệu khách.
+ */
+(function () {
+  "use strict";
+  var TC = window.TaiChinh;
+  var KHOA = "daovang.loi-nhuan.v1";
+  var PHIEN_BAN_SAO_LUU = 1;
+  var bp = new TC.BangPhi(JSON.parse(document.getElementById("bang-phi").textContent));
+  var mt = new TC.MayTinh(bp);
+  var $ = function (id) { return document.getElementById(id); };
+
+  var O_SO = ["gia_ban", "gia_von", "giam_gia_shop", "dong_goi", "ty_le_hoan", "quang_cao_pct", "ship_shop_chiu",
+    "hoa_hong_aff_shop_tra", "ship_tra_hang", "ty_le_hong_hang_hoan", "thue_gtgt", "thue_tncn", "phi_nganh_tu_nhap",
+    "hoa_hong_aff_nhan", "thue_aff"];
+  var O_CHON = ["san", "nganh", "ngay_ban", "che_do_khoang"];
+  var O_TICK = ["tham_gia_voucher_san", "shop_moi_mien_phi_co_dinh", "bo_phi_ha_tang"];
+
+  // ---- lưu trữ (bọc try/catch: chế độ ẩn danh có thể chặn) ----
+  function docKho() {
+    try { var s = localStorage.getItem(KHOA); return s ? JSON.parse(s) : null; } catch (e) { return null; }
+  }
+  function ghiKho(obj) {
+    try { localStorage.setItem(KHOA, JSON.stringify(obj)); return true; } catch (e) { return false; }
+  }
+  var kho = docKho() || {};
+  if (!kho.so_sku) kho.so_sku = [];
+
+  function thongBao(s) {
+    var t = $("thong-bao");
+    t.textContent = s;
+    t.classList.add("hien");
+    clearTimeout(thongBao.h);
+    thongBao.h = setTimeout(function () { t.classList.remove("hien"); }, 2200);
+  }
+
+  // ---- định dạng ----
+  function vnd(x) {
+    if (x === null || x === undefined) return "—";
+    var am = x < 0;
+    var s = Math.round(Math.abs(x)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    return (am ? "−" : "") + s + " đ";
+  }
+  function so(x, n) {
+    if (x === null || x === undefined) return "—";
+    return x.toFixed(n === undefined ? 2 : n).replace(".", ",");
+  }
+  function pct(x) { return so(x * 100, 2) + "%"; }
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  // "150.000" → 150000 ; "0,5" → 0.5 ; "" → mặc định / null
+  function docSo(el) {
+    var s = el.value.trim().replace(/\s/g, "");
+    if (s === "") return el.dataset.rong === "null" ? null : undefined;
+    if (el.dataset.loai === "tien") s = s.replace(/\./g, "").replace(",", ".");
+    else s = s.replace(",", ".");
+    if (!/^-?\d*\.?\d+$/.test(s)) return NaN;
+    return Number(s);
+  }
+
+  // ---- danh sách ngành ----
+  function napNganh(giuLai) {
+    var ma = $("san").value;
+    var cfg = TC.SAN[ma];
+    var ds = bp.nganhCua(cfg.ten, cfg.phi_nganh);
+    var sel = $("nganh");
+    sel.innerHTML = "";
+    ds.forEach(function (n) {
+      var o = document.createElement("option");
+      o.value = n; o.textContent = n;
+      sel.appendChild(o);
+    });
+    if (giuLai && ds.indexOf(giuLai) >= 0) sel.value = giuLai;
+    else if (ma === "tiktok" && cfg.nganh_mac_dinh) sel.value = cfg.nganh_mac_dinh;
+  }
+
+  // ---- đọc / ghi form ----
+  function layForm() {
+    var f = {};
+    O_CHON.forEach(function (k) { f[k] = $(k).value; });
+    O_SO.forEach(function (k) { f[k] = $(k).value; });
+    O_TICK.forEach(function (k) { f[k] = $(k).checked; });
+    return f;
+  }
+  function datForm(f) {
+    f = f || {};
+    if (f.san) $("san").value = f.san;
+    napNganh(f.nganh);
+    $("ngay_ban").value = f.ngay_ban || TC.homNay();
+    $("che_do_khoang").value = f.che_do_khoang || "cao";
+    O_SO.forEach(function (k) { $(k).value = f[k] === undefined || f[k] === null ? "" : String(f[k]); });
+    O_TICK.forEach(function (k) { $(k).checked = !!f[k]; });
+  }
+
+  function dauVaoTuForm() {
+    var dv = { san: $("san").value, nganh: $("nganh").value, ngay_ban: $("ngay_ban").value || TC.homNay(),
+      che_do_khoang: $("che_do_khoang").value };
+    var loi = [];
+    O_SO.forEach(function (k) {
+      var v = docSo($(k));
+      if (typeof v === "number" && isNaN(v)) loi.push($(k).labels[0].textContent);
+      else if (v !== undefined) dv[k] = v;
+    });
+    dv.tham_gia_voucher_san = $("tham_gia_voucher_san").checked;
+    dv.shop_moi_mien_phi_co_dinh = $("shop_moi_mien_phi_co_dinh").checked;
+    dv.tinh_phi_ha_tang = !$("bo_phi_ha_tang").checked;
+    return { dv: dv, loi: loi };
+  }
+
+  // ---- hiện kết quả ----
+  function tomTat(ln, phu) {
+    var e = $("tt-ln");
+    e.textContent = ln === null ? "—" : vnd(ln);
+    e.className = ln === null ? "" : (ln >= 0 ? "lai" : "lo");
+    $("tt-phu").textContent = phu || "";
+  }
+
+  function veKetQua() {
+    var o = $("ket-qua");
+    tomTat(null, "");
+    var x = dauVaoTuForm();
+    if (x.loi.length) { o.innerHTML = '<div class="loi">Ô nhập chưa đúng số: ' + esc(x.loi.join(", ")) + "</div>"; return; }
+    if (x.dv.gia_ban === undefined || x.dv.gia_von === undefined) {
+      o.innerHTML = '<div class="loi">Nhập giá bán và giá vốn để tính.</div>'; return;
+    }
+    var kq;
+    try { kq = mt.tinh(x.dv); } catch (e) {
+      o.innerHTML = '<div class="loi">Thiếu dữ liệu / chưa tính được: ' + esc(e.message) + "</div>"; return;
+    }
+    tomTat(kq.ln, "ROAS hòa vốn " + so(kq.roas_hoa_von));
+    var h = [];
+    h.push('<div class="ghi">' + esc(kq.san) + " · " + esc(kq.nganh) + " · ngày " + esc(kq.ngay_ban) + "</div>");
+    h.push('<div>Lợi nhuận ròng / đơn</div><div class="so-lon ' + (kq.ln >= 0 ? "lai" : "lo") + '">' + vnd(kq.ln) + "</div>");
+    h.push('<div class="chi-so">' +
+      "<div><b>" + pct(kq.bien_rong) + "</b><span>Biên ròng (trên doanh thu đơn)</span></div>" +
+      "<div><b>" + so(kq.roas_hoa_von) + "</b><span>ROAS hòa vốn (thực thấp hơn = QC lỗ)</span></div>" +
+      "<div><b>" + vnd(kq.gia_hoa_von) + "</b><span>Giá bán hòa vốn (gồm QC)</span></div>" +
+      "<div><b>" + vnd(kq.gia_hoa_von_truoc_qc) + "</b><span>Giá bán hòa vốn (không QC)</span></div></div>");
+
+    h.push('<details style="margin-top:12px"><summary>Chi tiết từng khoản</summary><table>');
+    h.push('<tr><td>Doanh thu đơn (giá bán − giảm giá shop)</td><td class="so">' + vnd(kq.rev) + "</td></tr>");
+    kq.chi_phi.forEach(function (c) {
+      var tl = c.ty_le !== null ? " (" + so(c.ty_le) + "%)" : "";
+      var ng = c.do_tin_cay ? "<small>nguồn: " + esc(c.nguon) + " · " + esc(c.do_tin_cay) + " · " + esc(c.hieu_luc) + "</small>" : "";
+      h.push("<tr><td>− " + esc(c.ten) + tl + ng + '</td><td class="so">' + vnd(c.so_tien) + "</td></tr>");
+    });
+    h.push('<tr class="tong"><td>Lợi nhuận đơn giao thành công</td><td class="so">' + vnd(kq.cm) + "</td></tr>");
+    h.push("<tr><td>Chi phí mỗi đơn bị hoàn</td><td class=\"so\">" + vnd(kq.chi_phi_moi_don_hoan) + "</td></tr>");
+    h.push("<tr><td>Lợi nhuận trước quảng cáo (đã tính tỷ lệ hoàn)</td><td class=\"so\">" + vnd(kq.ln_truoc_qc) + "</td></tr>");
+    h.push("<tr><td>− Quảng cáo</td><td class=\"so\">" + vnd(kq.quang_cao) + "</td></tr>");
+    h.push('<tr class="tong"><td>Lợi nhuận ròng / đơn</td><td class="so">' + vnd(kq.ln) + "</td></tr>");
+    h.push("<tr><td>Thuế tạm khấu trừ kỳ vọng / đơn<small>có thể được hoàn nếu doanh thu năm ≤ 1 tỷ</small></td><td class=\"so\">" +
+      vnd(kq.thue_tam_khau_tru) + "</td></tr>");
+    h.push("</table></details>");
+
+    if (kq.affiliate) {
+      var a = kq.affiliate;
+      h.push('<details open style="margin-top:8px"><summary>Nhập hàng vs làm affiliate</summary><table>' +
+        "<tr><td>Nhập trực tiếp: lợi nhuận / đơn<small>vốn hàng " + vnd(a.von_hang_moi_don_nhap_truc_tiep) + " / đơn</small></td><td class=\"so\">" + vnd(kq.ln) + "</td></tr>" +
+        "<tr><td>Affiliate (" + so(a.hoa_hong_nhan_pct) + "% hoa hồng)<small>vốn hàng 0 đ · ROAS hòa vốn " + so(a.roas_hoa_von_affiliate) + "</small></td><td class=\"so\">" + vnd(a.ln_affiliate) + "</td></tr>" +
+        '<tr class="tong"><td>Chênh lệch (nhập − affiliate)</td><td class="so">' + vnd(a.chenh_lech_nhap_truc_tiep_tru_affiliate) + "</td></tr>" +
+        "</table></details>");
+    }
+    h.push('<details style="margin-top:8px"><summary>Cảnh báo (' + kq.canh_bao.length + ")</summary><ul class=\"canh\">" +
+      kq.canh_bao.map(function (c) { return "<li>" + esc(c) + "</li>"; }).join("") + "</ul></details>");
+    h.push('<div class="dam-bao">' + esc(kq.khong_dam_bao) + "</div>");
+    o.innerHTML = h.join("");
+  }
+
+  // ---- lưu tự động ----
+  function luu() {
+    kho.phien_ban = PHIEN_BAN_SAO_LUU;
+    kho.form = layForm();
+    if (!ghiKho(kho)) thongBao("Trình duyệt chặn lưu — nhớ tải bản sao lưu");
+  }
+  function capNhat() { veKetQua(); luu(); }
+
+  // ---- sổ SKU ----
+  function veSoSku() {
+    var ul = $("ds-sku");
+    ul.innerHTML = "";
+    if (!kho.so_sku.length) { ul.innerHTML = '<li class="ghi">Chưa có SKU nào.</li>'; return; }
+    kho.so_sku.forEach(function (s, i) {
+      var li = document.createElement("li");
+      var ten = document.createElement("span");
+      ten.textContent = s.ten + " · " + (s.form.san === "tiktok" ? "TikTok" : "Shopee");
+      var nut = document.createElement("span");
+      var mo = document.createElement("button"); mo.type = "button"; mo.textContent = "Mở";
+      mo.onclick = function () { datForm(s.form); $("ten_sku").value = s.ten; capNhat(); thongBao("Đã mở " + s.ten); };
+      var xoa = document.createElement("button"); xoa.type = "button"; xoa.textContent = "Xóa"; xoa.className = "xoa";
+      xoa.onclick = function () {
+        if (!confirm("Xóa SKU \"" + s.ten + "\" khỏi sổ?")) return;
+        kho.so_sku.splice(i, 1); luu(); veSoSku();
+      };
+      nut.appendChild(mo); nut.appendChild(document.createTextNode(" ")); nut.appendChild(xoa);
+      li.appendChild(ten); li.appendChild(nut);
+      ul.appendChild(li);
+    });
+  }
+  $("nut-luu-sku").onclick = function () {
+    var ten = $("ten_sku").value.trim();
+    if (!ten) { thongBao("Nhập tên SKU trước"); return; }
+    var f = layForm();
+    var cu = kho.so_sku.findIndex(function (s) { return s.ten === ten; });
+    var muc = { ten: ten, form: f, luu_luc: new Date().toISOString() };
+    if (cu >= 0) kho.so_sku[cu] = muc; else kho.so_sku.push(muc);
+    luu(); veSoSku(); thongBao("Đã lưu " + ten);
+  };
+
+  // ---- sao lưu ----
+  $("nut-tai").onclick = function () {
+    luu();
+    var goi = { ung_dung: "daovang", loai: "sao-luu-loi-nhuan", phien_ban: PHIEN_BAN_SAO_LUU,
+      tao_luc: new Date().toISOString(), bang_phi_sha256: bp.sha256, form: kho.form, so_sku: kho.so_sku };
+    var blob = new Blob([JSON.stringify(goi, null, 2)], { type: "application/json" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "daovang-sao-luu-" + TC.homNay() + ".json";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+    thongBao("Đã tạo bản sao lưu");
+  };
+  $("tep-nhap").onchange = function (ev) {
+    var tep = ev.target.files && ev.target.files[0];
+    if (!tep) return;
+    var r = new FileReader();
+    r.onload = function () {
+      try {
+        var g = JSON.parse(r.result);
+        if (g.ung_dung !== "daovang" || g.loai !== "sao-luu-loi-nhuan") throw new Error("không phải bản sao lưu Đào Vàng");
+        if (!confirm("Thay nhập liệu + sổ SKU hiện tại bằng bản sao lưu " + (g.tao_luc || "") + "?")) return;
+        kho.form = g.form || {}; kho.so_sku = Array.isArray(g.so_sku) ? g.so_sku : [];
+        datForm(kho.form); veSoSku(); capNhat(); thongBao("Đã nhập bản sao lưu");
+      } catch (e) { thongBao("Không đọc được: " + e.message); }
+      ev.target.value = "";
+    };
+    r.readAsText(tep);
+  };
+  $("nut-xoa").onclick = function () {
+    if (!confirm("Xóa các ô nhập (sổ SKU giữ nguyên)?")) return;
+    datForm({ san: $("san").value }); $("ten_sku").value = ""; capNhat();
+  };
+
+  // ---- khởi động ----
+  $("dong-dam-bao").textContent = TC.DONG_KHONG_DAM_BAO;
+  $("phien-ban-bang-phi").textContent = "Bảng phí: " + bp.nguon_tep + " · mã " + String(bp.sha256).slice(0, 12) +
+    " · " + bp.dong.length + " dòng. Mỗi khoản phí có nguồn + độ tin cậy trong \"Chi tiết\".";
+  datForm(kho.form);
+  veSoSku();
+  $("san").addEventListener("change", function () { napNganh(); capNhat(); });
+  document.querySelectorAll("input:not([type=file]):not(#ten_sku),select").forEach(function (el) {
+    el.addEventListener(el.tagName === "SELECT" || el.type === "checkbox" || el.type === "date" ? "change" : "input", capNhat);
+  });
+  veKetQua();
+})();
+
+</script>
+</body>
+</html>
