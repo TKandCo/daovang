@@ -84,6 +84,65 @@ class KiemTra(unittest.TestCase):
         self.assertTrue(any("> 300 USD" in x for x in loi))
         self.assertTrue(any("chủ dự án duyệt" in x for x in loi))
 
+    # --- Các lỗ hổng KTS tìm ra ở audit vòng 2 (12/11/2026) ---
+    def test_source_id_chi_co_dau_cham_phay(self):
+        self.sua_o("du-lieu/nhom-ung-vien.csv", 1, "source_id", ";")
+        self.assertTrue(any("chỉ có dấu ';'" in x for x in self.chay()))
+
+    def test_chi_nguon_noi_bo_ma_co_diem_nhu_cau(self):
+        self.sua_o("du-lieu/nhom-ung-vien.csv", 1, "source_id", "S21")
+        self.assertTrue(any("chỉ có nguồn nội bộ" in x for x in self.chay()))
+
+    def test_mo_hinh_ngoai_danh_sach(self):
+        self.sua_o("du-lieu/nhom-ung-vien.csv", 1, "mo_hinh", "mua_dut")
+        self.assertTrue(any("mo_hinh" in x for x in self.chay()))
+
+    def test_legal_cap_nhom_15(self):
+        # N04 (dòng 4): legal 6 -> 15, sửa tổng cho khớp để chỉ còn lỗi legal
+        self.sua_o("du-lieu/nhom-ung-vien.csv", 4, "legal", "15")
+        self.sua_o("du-lieu/nhom-ung-vien.csv", 4, "diem_so_bo", "31")
+        loi = self.chay()
+        self.assertTrue(any("legal cấp nhóm" in x for x in loi))
+        self.assertFalse(any("khác tổng" in x for x in loi))
+
+    def test_ngay_khong_that(self):
+        self.sua_o("du-lieu/nhom-ung-vien.csv", 1, "captured_at", "2026-13-45")
+        self.assertTrue(any("không phải ngày thật" in x for x in self.chay()))
+
+    def test_fee_ref_trong(self):
+        self.sua_o("du-lieu/nhom-ung-vien.csv", 1, "fee_ref", "")
+        self.assertTrue(any("fee_ref trống" in x for x in self.chay()))
+
+    def test_demand_cap_nhom_qua_10(self):
+        self.sua_o("du-lieu/nhom-ung-vien.csv", 1, "demand", "20")
+        self.sua_o("du-lieu/nhom-ung-vien.csv", 1, "diem_so_bo", "38")
+        self.assertTrue(any("demand cấp nhóm" in x for x in self.chay()))
+
+    def test_do_tin_cay_cao_hon_nguon(self):
+        self.sua_o("du-lieu/nhom-ung-vien.csv", 1, "do_tin_cay", "CAO")
+        self.assertTrue(any("cao hơn nguồn yếu nhất" in x for x in self.chay()))
+
+    def test_type_nguon_ngoai_danh_sach(self):
+        self.sua_o("du-lieu/source.csv", 1, "type", "la_lam")
+        self.assertTrue(any("type 'la_lam'" in x for x in self.chay()))
+
+    def test_url_tep_noi_bo_khong_ton_tai(self):
+        self.sua_o("du-lieu/source.csv", 19, "url", "bao-cao/khong-co.md")
+        self.assertTrue(any("không phải tệp có trong repo" in x for x in self.chay()))
+
+    # --- Lỗ hổng KTS tìm ra khi kiểm lại (12/11/2026) ---
+    def test_ngay_tuong_lai(self):
+        self.sua_o("du-lieu/nhom-ung-vien.csv", 1, "captured_at", "2030-01-01")
+        self.assertTrue(any("tương lai" in x for x in self.chay()))
+
+    def test_url_rong(self):
+        self.sua_o("du-lieu/source.csv", 1, "url", "http://")
+        self.assertTrue(any("không phải link" in x for x in self.chay()))
+
+    def test_ma_nhom_trung(self):
+        self.sua_o("du-lieu/nhom-ung-vien.csv", 2, "nhom_id", "N01")
+        self.assertTrue(any("trùng mã N01" in x for x in self.chay()))
+
     def test_score_hop_le(self):
         self.ghi_dong("mau/score.csv",
                       ["SC1", "P1", "2026-11-12", "10", "CHƯA ĐO", "CHƯA ĐO", "10",
