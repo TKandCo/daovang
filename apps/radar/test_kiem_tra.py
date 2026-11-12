@@ -18,7 +18,7 @@ import kiem_tra as kt  # noqa: E402
 class KiemTra(unittest.TestCase):
     def setUp(self):
         self.tam = tempfile.mkdtemp()
-        for d in ("mau", "du-lieu"):
+        for d in ("mau", "du-lieu", "nhap-tay"):
             shutil.copytree(os.path.join(kt.GOC, d), os.path.join(self.tam, d))
 
     def tearDown(self):
@@ -42,7 +42,7 @@ class KiemTra(unittest.TestCase):
     def test_du_lieu_that_dat(self):
         so_tep, loi = kt.kiem_tat_ca()
         self.assertEqual(loi, [])
-        self.assertEqual(so_tep, 11)
+        self.assertEqual(so_tep, 13)
 
     def test_du_20_nhom(self):
         _, ds = kt.doc_csv(os.path.join(kt.GOC, "du-lieu", "nhom-ung-vien.csv"))
@@ -147,10 +147,79 @@ class KiemTra(unittest.TestCase):
 
     def test_score_hop_le(self):
         self.ghi_dong("mau/score.csv",
-                      ["SC1", "P1", "2026-11-12", "10", "CHƯA ĐO", "CHƯA ĐO", "10",
+                      ["SC1", "P1", "dropship", "2026-11-12", "10", "CHƯA ĐO", "CHƯA ĐO", "10",
                        "CHƯA ĐO", "CHƯA ĐO", "6", "26", "Shopee|phi_co_dinh|Van phong pham",
-                       "", "theo_doi", "S04", "2026-11-12"])
+                       "", "", "theo_doi", "S04", "2026-11-12"])
         self.assertEqual(self.chay(), [])
+
+    # --- Đợt 1: chấm tách affiliate / dropship ---
+    def dong_score(self, mo_hinh, margin, bien, fee="Shopee|phi_co_dinh|Van phong pham"):
+        tong = 10 + 10 + 6 + (float(margin) if margin != "CHƯA ĐO" else 0)
+        return ["SC9", "P1", mo_hinh, "2026-11-12", "10", "CHƯA ĐO", margin, "10",
+                "CHƯA ĐO", "CHƯA ĐO", "6", f"{tong:g}", fee, bien, "", "theo_doi", "S04", "2026-11-12"]
+
+    def test_score_ca_hai_bi_chan(self):
+        self.ghi_dong("mau/score.csv", self.dong_score("ca_hai", "CHƯA ĐO", ""))
+        self.assertTrue(any("HAI dòng riêng" in x for x in self.chay()))
+
+    def test_score_dropship_dung_nguong(self):
+        self.ghi_dong("mau/score.csv", self.dong_score("dropship", "15", "16.25"))
+        self.assertEqual(self.chay(), [])
+
+    def test_score_dropship_sai_nguong(self):
+        self.ghi_dong("mau/score.csv", self.dong_score("dropship", "25", "16.25"))
+        self.assertTrue(any("khác ngưỡng dropship" in x for x in self.chay()))
+
+    def test_score_affiliate_khong_can_fee_ref(self):
+        self.ghi_dong("mau/score.csv", self.dong_score("affiliate", "25", "8.47", fee=""))
+        self.assertEqual(self.chay(), [])
+
+    def test_score_affiliate_dung_nguong_rieng(self):
+        # 6% thực nhận: affiliate = 15 điểm; nếu dùng ngưỡng dropship sẽ là 0 → phải báo lỗi
+        self.ghi_dong("mau/score.csv", self.dong_score("affiliate", "0", "6", fee=""))
+        self.assertTrue(any("phải 15" in x for x in self.chay()))
+
+    def test_score_thieu_bien_pct(self):
+        self.ghi_dong("mau/score.csv", self.dong_score("dropship", "8", ""))
+        self.assertTrue(any("thiếu bien_pct" in x for x in self.chay()))
+
+    def test_phi_theo_nhom_bi_sua_tay(self):
+        self.sua_o("du-lieu/phi-theo-nhom.csv", 1, "tong_phi_pct_gia_100k", "24.0")
+        self.assertTrue(any("không khớp phép tính lại" in x for x in self.chay()))
+
+    # --- Bảng nhập tay 4 nhóm ---
+    DONG_TOT = ["N18", "shopee", "2026-11-12", "Vòng cổ mèo có chuông", "https://shopee.vn/vi-du",
+                "35.000", "1,2k", "4,8", "10", "18000", ""]
+
+    def test_nhap_tay_dong_tot(self):
+        self.ghi_dong("nhap-tay/4-nhom.csv", self.DONG_TOT)
+        self.assertEqual(self.chay(), [])
+
+    def test_nhap_tay_loi(self):
+        for i, gia_tri, chu in ((0, "N03", "4 nhóm"), (1, "lazada", "shopee hoặc tiktok"),
+                                (2, "2030-01-01", "ngay_xem"), (4, "", "link trống"),
+                                (5, "ba mươi", "gia_ban_vnd"), (6, "nhiều", "da_ban"),
+                                (7, "6", "so_sao"), (8, "120", "hoa_hong_pct"), (3, "", "ten_san_pham")):
+            with self.subTest(cot=i):
+                self.tearDown()
+                self.setUp()
+                d = list(self.DONG_TOT)
+                d[i] = gia_tri
+                self.ghi_dong("nhap-tay/4-nhom.csv", d)
+                self.assertTrue(any(chu in x for x in self.chay()), (chu, self.chay()))
+
+    def test_doc_so(self):
+        self.assertEqual(kt.so_tien("35.000"), 35000)
+        self.assertEqual(kt.so_tien("35 000đ"), 35000)
+        self.assertEqual(kt.so_da_ban("1,2k"), 1200)
+        self.assertEqual(kt.so_da_ban("1.234"), 1234)
+        with self.assertRaises(ValueError):
+            kt.so_tien("3,5tr")
+
+    def test_nguong_bien(self):
+        self.assertEqual([kt.diem_bien("dropship", x) for x in (25, 20, 19.9, 12, 8, 7.9)],
+                         [25, 25, 15, 15, 8, 0])
+        self.assertEqual([kt.diem_bien("affiliate", x) for x in (8, 7.9, 5, 3, 2.9)], [25, 15, 15, 8, 0])
 
 
 class KhacO(unittest.TestCase):
@@ -176,12 +245,12 @@ class KhacO(unittest.TestCase):
     def test_kiem_ca_bo_khi_khac_o(self):
         tam = tempfile.mkdtemp()
         try:
-            for d in ("mau", "du-lieu"):
+            for d in ("mau", "du-lieu", "nhap-tay"):
                 shutil.copytree(os.path.join(kt.GOC, d), os.path.join(tam, d))
             with mock.patch.object(kt.os.path, "relpath", self._relpath_khac_o):
                 so_tep, loi = kt.kiem_tat_ca(tam)
                 self.assertEqual(loi, [])
-                self.assertEqual(so_tep, 11)
+                self.assertEqual(so_tep, 13)
                 # dữ liệu hỏng vẫn phải được báo (không văng ValueError)
                 p = os.path.join(tam, "du-lieu", "nhom-ung-vien.csv")
                 with open(p, encoding="utf-8", newline="") as f:
