@@ -16,3 +16,4 @@
 | 12/11/2026 | Dữ liệu thật (đơn, nhà cung cấp, sổ chi): SQLite trên máy nhà, không lên GitHub, sao lưu Drive cá nhân | Chủ dự án | Đủ cho một người, 0 đ | Đợt 2 (khi cần máy chủ) |
 | 12/11/2026 | Kiểm thử tự động: GitHub Actions chỉ chạy khi có PR (kiểm thử + quét khóa); ghi số phút mỗi chuyến vì dùng chung hạn mức với Holygrail | Chủ dự án | Lớp kiểm tự động, tiết kiệm phút | Khi hạn mức phút căng |
 | 12/11/2026 | Cổng Đợt 1 sửa (theo P12): lãi ròng CỘNG DỒN của cả dự án trong 4 tuần cuối Đợt 1 ≥ 0 sau mọi phí kể cả công cụ; dropship ≥ 30 đơn của một SKU | Tổng quản đề xuất, CHỜ chủ dự án duyệt | Cổng cũ qua được trong khi dự án lỗ | Hết Đợt 1 |
+| 12/11/2026 | DUYỆT cổng Đợt 1 mới: lãi ròng CỘNG DỒN của cả dự án trong 4 tuần cuối Đợt 1 ≥ 0 sau mọi phí kể cả công cụ; affiliate đo hoa hồng thực nhận; dropship ≥ 30 đơn của một SKU | Chủ dự án | Thay cổng cũ "≥ 1 SKU lãi ròng" (P12: qua được khi dự án lỗ) | Hết Đợt 1 |

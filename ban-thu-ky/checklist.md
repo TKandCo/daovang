@@ -23,7 +23,7 @@
 ## 🙋 Chờ chủ dự án
 - ✅ Mức vốn A · 3 giờ / ngày · affiliate + dropship · app HTML · SQLite · GitHub Actions khi PR (12/11).
 - Xem 5 nhánh phòng → "gom chuyến".
-- Duyệt cổng Đợt 1 mới (lãi ròng cộng dồn dự án ≥ 0).
+- ✅ Cổng Đợt 1 mới đã duyệt (12/11).
 - Chụp trang "ưu đãi người bán mới" (Kênh Người Bán, bài 2139) — dòng bảng phí duy nhất chưa có nguồn thứ hai.
 - Duyệt cổng qua Đợt 0.
 
