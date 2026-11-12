@@ -16,9 +16,10 @@ Quyết định 12/11/2026 (xem `ban-thu-ky/nhat-ky-quyet-dinh.md`).
 2. Tổng quản đề xuất mở phiên cloud cho phòng; **chủ dự án bấm đồng ý**. Mỗi phiên cloud đọc bản giao việc rồi làm.
 3. Phòng làm trên nhánh `phong/<pN>-<mã việc>` (từ nhánh chính mới nhất), chỉ sửa thư mục của mình + `bao-cao/<tuần>/<phòng>.md`.
 4. Cuối phiên: kiểm thử / kiểm ngược XONG HẾT (CLAUDE.md quy tắc 11), commit nhỏ, đẩy nhánh, ghi trong báo cáo "đã kiểm gì / chưa kiểm gì"
-   và link tạo PR. KHÔNG tự tạo / gộp PR — chủ dự án tạo PR và gộp. Ghi một dòng trạng thái ở đầu báo cáo.
-5. **Phiên cloud không báo ngược về phiên điều phối.** KTS định kỳ `git fetch`, đọc nhánh / PR, chạy lại kiểm thử, chấm điểm, ghi `audit.md`.
-6. Chủ dự án là người tạo PR và gộp sau audit. Không ai (kể cả Tổng quản / KTS / Ban thư ký) đẩy thẳng vào nhánh chính.
+   KHÔNG tạo PR, KHÔNG gộp (CLAUDE.md quy tắc 12). Ghi một dòng trạng thái ở đầu báo cáo.
+5. **Phiên cloud không báo ngược về phiên điều phối.** KTS định kỳ `git fetch`, đọc nhánh, chạy lại kiểm thử, chấm điểm, ghi `audit.md`, DUYỆT / TRẢ LẠI.
+6. **Gộp chuyến:** Tổng quản gom các nhánh KTS đã duyệt vào nhánh `chuyen-<YYYY-MM-DD>`, chạy lại toàn bộ kiểm thử, đẩy lên GitHub một lần,
+   báo chủ dự án link tạo PR. Chủ dự án tạo PR và gộp. Không ai đẩy thẳng vào nhánh chính.
 
 ## Quyền ghi (tránh xung đột)
 | Khu vực | Ai được ghi |
