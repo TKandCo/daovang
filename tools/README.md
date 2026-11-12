@@ -40,3 +40,23 @@ Không bắt được mật khẩu ngắn, khóa không có dạng đặc trưng
 `git commit --no-verify` → đề xuất bật thêm *secret scanning* của GitHub (miễn phí cho repo riêng tư? CHƯA XÁC MINH).
 
 Kiểm thử: `python3 -m unittest discover -s tools/tests`
+
+## `chay-kiem-thu.py` — chạy TOÀN BỘ kiểm thử bằng một lệnh
+```bash
+python3 tools/chay-kiem-thu.py
+```
+(Windows: `py tools\chay-kiem-thu.py`.) Gồm mọi bộ `unittest`, kiểm ngược P4, kiểm dữ liệu P1, app khớp nguồn,
+kiểm khớp JS ↔ Python, quét khóa. Dòng cuối `TẤT CẢ ĐẠT` mới được báo sẵn sàng. Chưa cài Node.js thì thêm `--nhanh`
+(bỏ kiểm khớp — khi đó CHƯA đủ điều kiện báo sẵn sàng). GitHub Actions (`.github/workflows/kiem-thu.yml`) chạy
+đúng lệnh này, chỉ khi có PR vào `main`. Phòng nào thêm thư mục kiểm thử mới → thêm vào `BO_UNITTEST` trong tệp
+này (nếu quên, bước "kiểm thử mồ côi" sẽ HỎNG).
+
+## `dong-goi-app.py` — đóng gói `app/daovang.html`
+`python3 tools/dong-goi-app.py` ghép `app/src/*` + bảng phí (`bao-cao/dot0/bang-phi-v1.csv`, đọc bằng chính mã
+Python của P4) thành một tệp. `--kiem` chỉ kiểm tệp đang có còn khớp nguồn không.
+
+## `kiem-khop.py` — kiểm khớp app (JS) ↔ máy tính Python của P4
+`python3 tools/kiem-khop.py` (cần Node.js ≥ 18). Chạy cùng bộ ví dụ (3 ví dụ kiểm ngược P4 × mức giữa / cao ×
+có / không hoàn, 400 ví dụ tự sinh, và `apps/finance/vi-du-kiem-khop.json` nếu P4 đã có) qua cả hai bản.
+Tiền lệch > 1 đ = HỎNG; chữ cảnh báo / tên khoản / nguồn phải giống hệt; ví dụ nhập sai phải báo cùng lỗi.
+`--so-ngau-nhien 5000` để kiểm kỹ hơn, `--chi-tiet` để in mọi chỗ lệch.
