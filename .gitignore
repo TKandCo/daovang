@@ -1,0 +1,23 @@
+# Bí mật và dữ liệu thật — không bao giờ commit
+.env
+.env.*
+*.key
+*.pem
+secrets/
+*.secret.*
+# Dữ liệu khách / đơn hàng / sổ sách thật
+data/
+du-lieu-that/
+exports/
+*.sqlite
+*.sqlite3
+*.db
+# Python / Node
+__pycache__/
+*.pyc
+.venv/
+node_modules/
+# Tạm
+*.log
+.DS_Store
+Thumbs.db
