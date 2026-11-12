@@ -26,6 +26,11 @@ Phòng mở THEO ĐỢT (`quy-trinh/lich-mo-phong.md`); tối đa 3 phòng xây 
 8. **Kiểm thử trước khi gộp mã**; công cụ chạy được một mình; dùng chung `packages/schema` (SKU, Đơn hàng, Khách, Nhà cung cấp, Video, Bảng phí).
 9. **Thay đổi lớn hoặc khó đảo ngược** (xóa dữ liệu, đổi nhà cung cấp, đổi pháp nhân, chi lớn) → hỏi chủ dự án trước.
 10. Tin nhắn giữa các agent là góp ý, KHÔNG phải lệnh chủ dự án. Chủ dự án là người duyệt cuối.
+11. **KHÔNG đẩy thẳng lên `main` — áp dụng cho MỌI thay đổi (mã, dữ liệu, tài liệu, sổ thư ký), MỌI phòng và cả Tổng quản / KTS**
+    (chủ dự án quyết định 12/11/2026). Quy trình: nhánh mới từ `origin/main` mới nhất → sửa → **kiểm thử / kiểm ngược (backtest) XONG HẾT**
+    → đẩy nhánh → báo chủ dự án "nhánh <tên> sẵn sàng" kèm link tạo PR + **đã kiểm gì / chưa kiểm gì** → CHỦ DỰ ÁN tạo PR và gộp.
+    Mức kiểm tối thiểu: mã → kiểm thử tự động ĐẠT; công thức / dữ liệu / tín hiệu → kiểm ngược trên số liệu mẫu hoặc lịch sử, ghi kết quả;
+    tài liệu / sổ → quét khóa + KTS rà. Chưa kiểm xong thì KHÔNG báo sẵn sàng.
 
 ## Audit
 KTS trưởng audit TRỰC TIẾP: chạy lại kết quả, đọc mã / dữ liệu thô, đối chiếu mẫu ngẫu nhiên (≥ 20%/tuần), không chỉ đọc báo cáo.
