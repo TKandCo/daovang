@@ -1,5 +1,5 @@
 # P1 — Nghiên cứu xu hướng sản phẩm & nguồn hàng (Đợt 0)
-Ngày: 12/11/2026 · Người lập: Trưởng phòng P1 · Phạm vi: nguồn dữ liệu HỢP PHÁP cho "Radar sản phẩm"
+Ngày: 12/11/2026 (sửa theo audit 12/11/2026 — xem mục 5 và `p1-radar-v2.md`) · Người lập: Trưởng phòng P1 · Phạm vi: nguồn dữ liệu HỢP PHÁP cho "Radar sản phẩm"
 
 Nhãn độ tin cậy: [CAO] nguồn chính thức · [TB] nhiều nguồn khớp · [THẤP] một nguồn / mâu thuẫn · CHƯA XÁC MINH = không tìm được.
 Giới hạn nghiên cứu: các trang tài liệu chính thức của Shopee Open Platform (open.shopee.com) và TikTok Shop Partner Center (JavaScript) KHÔNG đọc được bằng công cụ; trang giá của Kalodata/FastMoss/Metric không công khai giá. Vì vậy nhiều mục chỉ đạt [TB]/[THẤP] và phải xác minh tay (xem mục 8).
@@ -85,7 +85,11 @@ Bối cảnh pháp lý: Luật Thương mại điện tử 2025 (số 122/2025/Q
 
 ## 5. Khung chấm điểm sản phẩm (100 điểm)
 
-Bối cảnh phí: Shopee phí xử lý giao dịch 6% từ 08/05/2026 (trước đó 4,9%) + phí cố định theo ngành (CHƯA XÁC MINH từng mức; bảng phí là hình ảnh) ; TikTok Shop hoa hồng từ 09/05/2026 tăng (thời trang 14,6% → 16,1%; mẹ & bé 14,5% → 17,8%); tổng phí sàn ~23–24% doanh thu chưa tính quảng cáo; lãi ròng nhiều shop 5–10% (VnBusiness 18/05/2026). Shop mới Shopee được miễn phí cố định 30 ngày đầu [TB].
+Bối cảnh phí (ĐÃ SỬA 12/11/2026 theo `audit-p1.md` và đính chính cuối `audit-p4.md`; số phí dùng để chấm điểm lấy từ `bao-cao/dot0/bang-phi-v1.csv` của P4, KHÔNG lấy từ đoạn này):
+- Shopee phí xử lý giao dịch 6% (hiệu lực 01/05/2026 với người bán thường, Mall từ 08/05/2026) + phí cố định theo ngành — xem bảng phí P4 (nguồn https://banhang.shopee.vn/edu/article/2150 và /27540) [CAO theo P4]. Bản trước ghi "từ 08/05, trước đó 4,9%" — sai ngày với người bán thường, đã thay.
+- TikTok Shop: con số hoa hồng theo ngành bản trước ghi (thời trang 14,6% → 16,1%; mẹ & bé 14,5% → 17,8%) **[THẤP] — KTS không xác nhận được** (17,8% gắn với nhóm Mall, không tách ngành mẹ & bé). KHÔNG dùng để chấm điểm. Dùng bảng phí P4 (mặc định 14% từ 03/07/2026, PDF chính thức, KTS đối chiếu KHỚP); P1 vẫn coi mức theo từng ngành TikTok là cần chủ dự án đối chiếu Seller Center trước khi chốt biên lợi nhuận.
+- Tổng phí sàn ~23–24% doanh thu chưa tính quảng cáo; lãi ròng nhiều shop 5–10% (VnBusiness 18/05/2026) [TB] — chỉ là mức tham khảo báo chí, không thay bảng phí.
+- **Shopee miễn phí cố định cho người bán mới — ĐÍNH CHÍNH:** có nguồn chính thức: shop có sản phẩm đầu tiên đăng thành công từ 01/11/2026 được miễn **phí cố định** 30 ngày, tối đa 200 đơn thành công; KHÔNG miễn phí xử lý giao dịch 6% và phí hạ tầng 3.000đ/đơn (https://banhang.shopee.vn/edu/article/2139, P4 tra 12/11/2026) [CAO theo P4; P1 chưa tự mở trang — mạng phiên cloud chặn]. Bản trước ghi "[TB], 30 ngày đầu" không nêu điều kiện; audit P1 từng hạ xuống [THẤP], audit P4 đính chính lại. Ưu đãi giảm phí cố định 01/06–31/08/2026 đã hết hạn.
 
 | # | Tiêu chí | Điểm | Cách chấm (gợi ý, hiệu chỉnh sau lô thử đầu) |
 |---|---|---|---|
