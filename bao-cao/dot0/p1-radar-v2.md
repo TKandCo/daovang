@@ -3,7 +3,9 @@ Ngày: 12/11/2026 · Người lập: Trưởng phòng P1 (phiên cloud) · Nhán
 
 **Trạng thái:** 🟡 xong phần việc giao; nhánh sẵn sàng cho KTS audit · đang chờ: chủ dự án tạo PR + đối chiếu số trên Seller Center / Metric · rủi ro: mọi số thị trường chỉ đọc qua trích đoạn tìm kiếm (mạng phiên cloud chặn trang gốc).
 
-Link tạo PR (chủ dự án bấm): https://github.com/TKandCo/daovang/pull/new/phong/p1-dot0
+Cập nhật 12/11/2026: chủ dự án đồng ý chọn 4 nhóm N18, N01, N02, N05; giá công cụ + kết luận họp KTS ở `p1-cong-cu-so-lieu.md`; nguồn S22–S26 đã thêm. Tổng quản sẽ gộp chuyến tạo PR.
+
+Link tạo PR: https://github.com/TKandCo/daovang/pull/new/phong/p1-dot0
 
 ---
 
