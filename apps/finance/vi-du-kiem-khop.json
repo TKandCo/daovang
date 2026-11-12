@@ -1,0 +1,918 @@
+{
+  "phien_ban": "1.0.0",
+  "sinh_boi": "apps/finance/taichinh/vi_du_kiem_khop.py (bản Python là chuẩn)",
+  "bang_phi": "bao-cao/dot0/bang-phi-v1.csv",
+  "dung_sai": {
+    "tien_vnd": 0.5,
+    "ty_le": 1e-06,
+    "roas": 0.0001,
+    "gia_hoa_von_vnd": 2
+  },
+  "ghi_chu": "Tiền VND, tỷ lệ nhập theo % (6 = 6%), tỷ lệ đầu ra (bien_rong, ty_le_phi_*) là phân số (0.23 = 23%). Công thức: apps/finance/README.md. MỌI SỐ LÀ GIẢ ĐỊNH. Số đầu vào (giá vốn, giá bán, tỷ lệ hoàn, quảng cáo…) là GIẢ ĐỊNH do người dùng nhập. Không phải khuyến nghị đầu tư / không đảm bảo lợi nhuận.",
+  "vi_du": [
+    {
+      "id": "don-01",
+      "loai": "don",
+      "mo_ta": "Shopee thời trang (ví dụ A báo cáo Đợt 0, phí giữa khoảng)",
+      "dau_vao": {
+        "san": "shopee",
+        "nganh": "Thoi trang (tat ca)",
+        "gia_ban": 150000,
+        "gia_von": 60000,
+        "dong_goi": 3000,
+        "ty_le_hoan": 10,
+        "ship_tra_hang": 40000,
+        "ty_le_hong_hang_hoan": 30,
+        "che_do_khoang": "giua",
+        "ngay_ban": "2026-11-12"
+      },
+      "phi_ap_dung": {
+        "phi_nganh_pct": 15.0,
+        "phi_giao_dich_pct": 6.0,
+        "phi_moi_don_vnd": 3000.0,
+        "voucher_san_pct": 0.0,
+        "voucher_san_tran_vnd": 50000,
+        "thue_khau_tru_pct": 1.5,
+        "ship_tra_hang_vnd": 40000.0,
+        "phi_moi_don_mat_khi_hoan": false
+      },
+      "mong_doi": {
+        "rev": 150000.0,
+        "chi_phi": [
+          {
+            "ten": "Giá vốn",
+            "so_tien": 60000
+          },
+          {
+            "ten": "Đóng gói",
+            "so_tien": 3000
+          },
+          {
+            "ten": "Phí ngành (phi_co_dinh)",
+            "so_tien": 22500.0
+          },
+          {
+            "ten": "Phí giao dịch (phi_xu_ly_giao_dich)",
+            "so_tien": 9000.0
+          },
+          {
+            "ten": "Phí mỗi đơn (phi_ha_tang)",
+            "so_tien": 3000.0
+          },
+          {
+            "ten": "Thuế sàn khấu trừ (GTGT 1% + TNCN 0.5%)",
+            "so_tien": 2250.0
+          }
+        ],
+        "cm": 50250.0,
+        "chi_phi_moi_don_hoan": 61000.0,
+        "ln_truoc_qc": 39125.0,
+        "quang_cao": 0.0,
+        "ln": 39125.0,
+        "bien_rong": 0.260833,
+        "roas_hoa_von": 3.8339,
+        "gia_hoa_von": 93907.0,
+        "gia_hoa_von_truoc_qc": 93907.0,
+        "thue_tam_khau_tru": 2025.0,
+        "ty_le_phi_san_aff_chua_thue": 0.23,
+        "ty_le_phi_gom_thue_khau_tru": 0.245
+      }
+    },
+    {
+      "id": "don-02",
+      "loai": "don",
+      "mo_ta": "Shopee làm đẹp + Voucher Xtra + affiliate 5% (ví dụ B Đợt 0)",
+      "dau_vao": {
+        "san": "shopee",
+        "nganh": "Sac dep",
+        "gia_ban": 250000,
+        "giam_gia_shop": 25000,
+        "gia_von": 95000,
+        "dong_goi": 3500,
+        "tham_gia_voucher_san": true,
+        "hoa_hong_aff_shop_tra": 5,
+        "ty_le_hoan": 5,
+        "ship_tra_hang": 40000,
+        "ty_le_hong_hang_hoan": 30,
+        "che_do_khoang": "giua",
+        "ngay_ban": "2026-11-12"
+      },
+      "phi_ap_dung": {
+        "phi_nganh_pct": 17.0,
+        "phi_giao_dich_pct": 6.0,
+        "phi_moi_don_vnd": 3000.0,
+        "voucher_san_pct": 5.5,
+        "voucher_san_tran_vnd": 50000,
+        "thue_khau_tru_pct": 1.5,
+        "ship_tra_hang_vnd": 40000.0,
+        "phi_moi_don_mat_khi_hoan": false
+      },
+      "mong_doi": {
+        "rev": 225000,
+        "chi_phi": [
+          {
+            "ten": "Giá vốn",
+            "so_tien": 95000
+          },
+          {
+            "ten": "Đóng gói",
+            "so_tien": 3500
+          },
+          {
+            "ten": "Phí ngành (phi_co_dinh)",
+            "so_tien": 38250.0
+          },
+          {
+            "ten": "Phí giao dịch (phi_xu_ly_giao_dich)",
+            "so_tien": 13500.0
+          },
+          {
+            "ten": "Phí mỗi đơn (phi_ha_tang)",
+            "so_tien": 3000.0
+          },
+          {
+            "ten": "Voucher sàn (phi_dich_vu_goi_voucher_xtra)",
+            "so_tien": 12375.0
+          },
+          {
+            "ten": "Hoa hồng affiliate shop trả",
+            "so_tien": 11250.0
+          },
+          {
+            "ten": "Thuế sàn khấu trừ (GTGT 1% + TNCN 0.5%)",
+            "so_tien": 3375.0
+          }
+        ],
+        "cm": 44750.0,
+        "chi_phi_moi_don_hoan": 72000.0,
+        "ln_truoc_qc": 38912.5,
+        "quang_cao": 0.0,
+        "ln": 38912.5,
+        "bien_rong": 0.172944,
+        "roas_hoa_von": 5.7822,
+        "gia_hoa_von": 186984.0,
+        "gia_hoa_von_truoc_qc": 186984.0,
+        "thue_tam_khau_tru": 3206.25,
+        "ty_le_phi_san_aff_chua_thue": 0.348333,
+        "ty_le_phi_gom_thue_khau_tru": 0.363333
+      }
+    },
+    {
+      "id": "don-03",
+      "loai": "don",
+      "mo_ta": "Shopee làm đẹp, quảng cáo 10%, không hoàn",
+      "dau_vao": {
+        "san": "shopee",
+        "nganh": "Sac dep",
+        "gia_ban": 200000,
+        "gia_von": 80000,
+        "dong_goi": 2000,
+        "quang_cao_pct": 10,
+        "ngay_ban": "2026-11-12"
+      },
+      "phi_ap_dung": {
+        "phi_nganh_pct": 17.0,
+        "phi_giao_dich_pct": 6.0,
+        "phi_moi_don_vnd": 3000.0,
+        "voucher_san_pct": 0.0,
+        "voucher_san_tran_vnd": 50000,
+        "thue_khau_tru_pct": 1.5,
+        "ship_tra_hang_vnd": 40000.0,
+        "phi_moi_don_mat_khi_hoan": false
+      },
+      "mong_doi": {
+        "rev": 200000.0,
+        "chi_phi": [
+          {
+            "ten": "Giá vốn",
+            "so_tien": 80000
+          },
+          {
+            "ten": "Đóng gói",
+            "so_tien": 2000
+          },
+          {
+            "ten": "Phí ngành (phi_co_dinh)",
+            "so_tien": 34000.0
+          },
+          {
+            "ten": "Phí giao dịch (phi_xu_ly_giao_dich)",
+            "so_tien": 12000.0
+          },
+          {
+            "ten": "Phí mỗi đơn (phi_ha_tang)",
+            "so_tien": 3000.0
+          },
+          {
+            "ten": "Thuế sàn khấu trừ (GTGT 1% + TNCN 0.5%)",
+            "so_tien": 3000.0
+          }
+        ],
+        "cm": 66000.0,
+        "chi_phi_moi_don_hoan": 66000.0,
+        "ln_truoc_qc": 66000.0,
+        "quang_cao": 20000.0,
+        "ln": 46000.0,
+        "bien_rong": 0.23,
+        "roas_hoa_von": 3.0303,
+        "gia_hoa_von": 129771.0,
+        "gia_hoa_von_truoc_qc": 112583.0,
+        "thue_tam_khau_tru": 3000.0,
+        "ty_le_phi_san_aff_chua_thue": 0.245,
+        "ty_le_phi_gom_thue_khau_tru": 0.26
+      }
+    },
+    {
+      "id": "don-04",
+      "loai": "don",
+      "mo_ta": "Shopee Voucher Xtra chạm trần 50.000đ",
+      "dau_vao": {
+        "san": "shopee",
+        "nganh": "Sac dep",
+        "gia_ban": 2000000,
+        "gia_von": 500000,
+        "tham_gia_voucher_san": true,
+        "ngay_ban": "2026-11-12"
+      },
+      "phi_ap_dung": {
+        "phi_nganh_pct": 17.0,
+        "phi_giao_dich_pct": 6.0,
+        "phi_moi_don_vnd": 3000.0,
+        "voucher_san_pct": 5.5,
+        "voucher_san_tran_vnd": 50000,
+        "thue_khau_tru_pct": 1.5,
+        "ship_tra_hang_vnd": 40000.0,
+        "phi_moi_don_mat_khi_hoan": false
+      },
+      "mong_doi": {
+        "rev": 2000000.0,
+        "chi_phi": [
+          {
+            "ten": "Giá vốn",
+            "so_tien": 500000
+          },
+          {
+            "ten": "Phí ngành (phi_co_dinh)",
+            "so_tien": 340000.0
+          },
+          {
+            "ten": "Phí giao dịch (phi_xu_ly_giao_dich)",
+            "so_tien": 120000.0
+          },
+          {
+            "ten": "Phí mỗi đơn (phi_ha_tang)",
+            "so_tien": 3000.0
+          },
+          {
+            "ten": "Voucher sàn (phi_dich_vu_goi_voucher_xtra)",
+            "so_tien": 50000.0
+          },
+          {
+            "ten": "Thuế sàn khấu trừ (GTGT 1% + TNCN 0.5%)",
+            "so_tien": 30000.0
+          }
+        ],
+        "cm": 957000.0,
+        "chi_phi_moi_don_hoan": 190000.0,
+        "ln_truoc_qc": 957000.0,
+        "quang_cao": 0.0,
+        "ln": 957000.0,
+        "bien_rong": 0.4785,
+        "roas_hoa_von": 2.0899,
+        "gia_hoa_von": 718572.0,
+        "gia_hoa_von_truoc_qc": 718572.0,
+        "thue_tam_khau_tru": 30000.0,
+        "ty_le_phi_san_aff_chua_thue": 0.2565,
+        "ty_le_phi_gom_thue_khau_tru": 0.2715
+      }
+    },
+    {
+      "id": "don-05",
+      "loai": "don",
+      "mo_ta": "Shopee shop mới miễn phí cố định, hoàn 10%, ship trả mặc định trần bảng phí",
+      "dau_vao": {
+        "san": "shopee",
+        "nganh": "Sac dep",
+        "gia_ban": 100000,
+        "gia_von": 40000,
+        "dong_goi": 2000,
+        "ty_le_hoan": 10,
+        "ty_le_hong_hang_hoan": 50,
+        "shop_moi_mien_phi_co_dinh": true,
+        "ngay_ban": "2026-11-12"
+      },
+      "phi_ap_dung": {
+        "phi_nganh_pct": 0.0,
+        "phi_giao_dich_pct": 6.0,
+        "phi_moi_don_vnd": 3000.0,
+        "voucher_san_pct": 0.0,
+        "voucher_san_tran_vnd": 50000,
+        "thue_khau_tru_pct": 1.5,
+        "ship_tra_hang_vnd": 40000.0,
+        "phi_moi_don_mat_khi_hoan": false
+      },
+      "mong_doi": {
+        "rev": 100000.0,
+        "chi_phi": [
+          {
+            "ten": "Giá vốn",
+            "so_tien": 40000
+          },
+          {
+            "ten": "Đóng gói",
+            "so_tien": 2000
+          },
+          {
+            "ten": "Phí ngành (phi_co_dinh)",
+            "so_tien": 0.0
+          },
+          {
+            "ten": "Phí giao dịch (phi_xu_ly_giao_dich)",
+            "so_tien": 6000.0
+          },
+          {
+            "ten": "Phí mỗi đơn (phi_ha_tang)",
+            "so_tien": 3000.0
+          },
+          {
+            "ten": "Thuế sàn khấu trừ (GTGT 1% + TNCN 0.5%)",
+            "so_tien": 1500.0
+          }
+        ],
+        "cm": 47500.0,
+        "chi_phi_moi_don_hoan": 62000.0,
+        "ln_truoc_qc": 36550.0,
+        "quang_cao": 0.0,
+        "ln": 36550.0,
+        "bien_rong": 0.3655,
+        "roas_hoa_von": 2.736,
+        "gia_hoa_von": 56096.0,
+        "gia_hoa_von_truoc_qc": 56096.0,
+        "thue_tam_khau_tru": 1350.0,
+        "ty_le_phi_san_aff_chua_thue": 0.09,
+        "ty_le_phi_gom_thue_khau_tru": 0.105
+      }
+    },
+    {
+      "id": "don-06",
+      "loai": "don",
+      "mo_ta": "TikTok giày dép (mức cao 15%), hoàn 10%, phí xử lý đơn mất khi hoàn",
+      "dau_vao": {
+        "san": "tiktok",
+        "nganh": "Giay dep",
+        "gia_ban": 200000,
+        "gia_von": 80000,
+        "ty_le_hoan": 10,
+        "ship_tra_hang": 30000,
+        "ty_le_hong_hang_hoan": 0,
+        "ngay_ban": "2026-11-12"
+      },
+      "phi_ap_dung": {
+        "phi_nganh_pct": 15.0,
+        "phi_giao_dich_pct": 6.0,
+        "phi_moi_don_vnd": 3000.0,
+        "voucher_san_pct": 0.0,
+        "voucher_san_tran_vnd": 50000,
+        "thue_khau_tru_pct": 1.5,
+        "ship_tra_hang_vnd": 30000.0,
+        "phi_moi_don_mat_khi_hoan": true
+      },
+      "mong_doi": {
+        "rev": 200000.0,
+        "chi_phi": [
+          {
+            "ten": "Giá vốn",
+            "so_tien": 80000
+          },
+          {
+            "ten": "Phí ngành (phi_hoa_hong_nen_tang)",
+            "so_tien": 30000.0
+          },
+          {
+            "ten": "Phí giao dịch (phi_giao_dich)",
+            "so_tien": 12000.0
+          },
+          {
+            "ten": "Phí mỗi đơn (phi_xu_ly_don_hang)",
+            "so_tien": 3000.0
+          },
+          {
+            "ten": "Thuế sàn khấu trừ (GTGT 1% + TNCN 0.5%)",
+            "so_tien": 3000.0
+          }
+        ],
+        "cm": 72000.0,
+        "chi_phi_moi_don_hoan": 33000.0,
+        "ln_truoc_qc": 61500.0,
+        "quang_cao": 0.0,
+        "ln": 61500.0,
+        "bien_rong": 0.3075,
+        "roas_hoa_von": 3.252,
+        "gia_hoa_von": 111828.0,
+        "gia_hoa_von_truoc_qc": 111828.0,
+        "thue_tam_khau_tru": 2700.0,
+        "ty_le_phi_san_aff_chua_thue": 0.225,
+        "ty_le_phi_gom_thue_khau_tru": 0.24
+      }
+    },
+    {
+      "id": "don-07",
+      "loai": "don",
+      "mo_ta": "TikTok ngành mặc định 14%, VXP 5%, quảng cáo 8%",
+      "dau_vao": {
+        "san": "tiktok",
+        "nganh": "",
+        "gia_ban": 180000,
+        "giam_gia_shop": 10000,
+        "gia_von": 70000,
+        "dong_goi": 2000,
+        "tham_gia_voucher_san": true,
+        "quang_cao_pct": 8,
+        "ty_le_hoan": 6,
+        "ship_tra_hang": 25000,
+        "ngay_ban": "2026-11-12"
+      },
+      "phi_ap_dung": {
+        "phi_nganh_pct": 14.0,
+        "phi_giao_dich_pct": 6.0,
+        "phi_moi_don_vnd": 3000.0,
+        "voucher_san_pct": 5.0,
+        "voucher_san_tran_vnd": 50000,
+        "thue_khau_tru_pct": 1.5,
+        "ship_tra_hang_vnd": 25000.0,
+        "phi_moi_don_mat_khi_hoan": true
+      },
+      "mong_doi": {
+        "rev": 170000,
+        "chi_phi": [
+          {
+            "ten": "Giá vốn",
+            "so_tien": 70000
+          },
+          {
+            "ten": "Đóng gói",
+            "so_tien": 2000
+          },
+          {
+            "ten": "Phí ngành (phi_hoa_hong_nen_tang)",
+            "so_tien": 23800.0
+          },
+          {
+            "ten": "Phí giao dịch (phi_giao_dich)",
+            "so_tien": 10200.0
+          },
+          {
+            "ten": "Phí mỗi đơn (phi_xu_ly_don_hang)",
+            "so_tien": 3000.0
+          },
+          {
+            "ten": "Voucher sàn (phi_dich_vu_Voucher_Extra_VXP)",
+            "so_tien": 8500.0
+          },
+          {
+            "ten": "Thuế sàn khấu trừ (GTGT 1% + TNCN 0.5%)",
+            "so_tien": 2550.0
+          }
+        ],
+        "cm": 49950.0,
+        "chi_phi_moi_don_hoan": 51000.0,
+        "ln_truoc_qc": 43893.0,
+        "quang_cao": 13600.0,
+        "ln": 30293.0,
+        "bien_rong": 0.178194,
+        "roas_hoa_von": 3.8731,
+        "gia_hoa_von": 130413.0,
+        "gia_hoa_von_truoc_qc": 116470.0,
+        "thue_tam_khau_tru": 2397.0,
+        "ty_le_phi_san_aff_chua_thue": 0.267647,
+        "ty_le_phi_gom_thue_khau_tru": 0.282647
+      }
+    },
+    {
+      "id": "dropship-01",
+      "loai": "dropship",
+      "mo_ta": "Dropship Shopee làm đẹp, phí NCC 5.000, hủy 10%, hoàn 10%",
+      "dau_vao": {
+        "san": "shopee",
+        "nganh": "Sac dep",
+        "gia_ban": 200000,
+        "gia_von": 80000,
+        "ty_le_hoan": 10,
+        "ship_tra_hang": 30000,
+        "ty_le_hong_hang_hoan": 50,
+        "ngay_ban": "2026-11-12",
+        "phi_ncc": 5000,
+        "ty_le_huy": 10,
+        "ngay_giao": 3,
+        "loai_shop": "moi"
+      },
+      "phi_ap_dung": {
+        "phi_nganh_pct": 17.0,
+        "phi_giao_dich_pct": 6.0,
+        "phi_moi_don_vnd": 3000.0,
+        "voucher_san_pct": 0.0,
+        "voucher_san_tran_vnd": 50000,
+        "thue_khau_tru_pct": 1.5,
+        "ship_tra_hang_vnd": 30000.0,
+        "phi_moi_don_mat_khi_hoan": false
+      },
+      "mong_doi": {
+        "don_khong_huy": {
+          "rev": 200000.0,
+          "chi_phi": [
+            {
+              "ten": "Giá vốn",
+              "so_tien": 80000
+            },
+            {
+              "ten": "Đóng gói",
+              "so_tien": 5000.0
+            },
+            {
+              "ten": "Phí ngành (phi_co_dinh)",
+              "so_tien": 34000.0
+            },
+            {
+              "ten": "Phí giao dịch (phi_xu_ly_giao_dich)",
+              "so_tien": 12000.0
+            },
+            {
+              "ten": "Phí mỗi đơn (phi_ha_tang)",
+              "so_tien": 3000.0
+            },
+            {
+              "ten": "Thuế sàn khấu trừ (GTGT 1% + TNCN 0.5%)",
+              "so_tien": 3000.0
+            }
+          ],
+          "cm": 63000.0,
+          "chi_phi_moi_don_hoan": 75000.0,
+          "ln_truoc_qc": 49200.0,
+          "quang_cao": 0.0,
+          "ln": 49200.0,
+          "bien_rong": 0.246,
+          "roas_hoa_von": 4.065,
+          "gia_hoa_von": 127594.0,
+          "gia_hoa_von_truoc_qc": 127594.0,
+          "thue_tam_khau_tru": 2700.0,
+          "ty_le_phi_san_aff_chua_thue": 0.245,
+          "ty_le_phi_gom_thue_khau_tru": 0.26
+        },
+        "ln_moi_don_dat": 43780.0,
+        "ln_truoc_qc_moi_don_dat": 43780.0,
+        "chi_phi_moi_don_huy": 5000,
+        "chi_ra_moi_don_dat": 77000.0,
+        "tien_ve_moi_don_dat": 117180.0,
+        "ngay_cho": 4,
+        "ngay_rut": 1,
+        "ngay_tre": 8
+      }
+    },
+    {
+      "id": "dropship-02",
+      "loai": "dropship",
+      "mo_ta": "Dropship TikTok shop mới (chờ 8 ngày), hủy 5%, chi phí hủy 8.000, quảng cáo 10%",
+      "dau_vao": {
+        "san": "tiktok",
+        "nganh": "",
+        "gia_ban": 150000,
+        "gia_von": 55000,
+        "ty_le_hoan": 8,
+        "ship_tra_hang": 25000,
+        "ty_le_hong_hang_hoan": 40,
+        "quang_cao_pct": 10,
+        "ngay_ban": "2026-11-12",
+        "phi_ncc": 4000,
+        "ty_le_huy": 5,
+        "chi_phi_moi_don_huy": 8000,
+        "ngay_giao": 4,
+        "loai_shop": "moi"
+      },
+      "phi_ap_dung": {
+        "phi_nganh_pct": 14.0,
+        "phi_giao_dich_pct": 6.0,
+        "phi_moi_don_vnd": 3000.0,
+        "voucher_san_pct": 0.0,
+        "voucher_san_tran_vnd": 50000,
+        "thue_khau_tru_pct": 1.5,
+        "ship_tra_hang_vnd": 25000.0,
+        "phi_moi_don_mat_khi_hoan": true
+      },
+      "mong_doi": {
+        "don_khong_huy": {
+          "rev": 150000.0,
+          "chi_phi": [
+            {
+              "ten": "Giá vốn",
+              "so_tien": 55000
+            },
+            {
+              "ten": "Đóng gói",
+              "so_tien": 4000.0
+            },
+            {
+              "ten": "Phí ngành (phi_hoa_hong_nen_tang)",
+              "so_tien": 21000.0
+            },
+            {
+              "ten": "Phí giao dịch (phi_giao_dich)",
+              "so_tien": 9000.0
+            },
+            {
+              "ten": "Phí mỗi đơn (phi_xu_ly_don_hang)",
+              "so_tien": 3000.0
+            },
+            {
+              "ten": "Thuế sàn khấu trừ (GTGT 1% + TNCN 0.5%)",
+              "so_tien": 2250.0
+            }
+          ],
+          "cm": 55750.0,
+          "chi_phi_moi_don_hoan": 54000.0,
+          "ln_truoc_qc": 46970.0,
+          "quang_cao": 15000.0,
+          "ln": 31970.0,
+          "bien_rong": 0.213133,
+          "roas_hoa_von": 3.1935,
+          "gia_hoa_von": 98618.0,
+          "gia_hoa_von_truoc_qc": 84963.0,
+          "thue_tam_khau_tru": 2070.0,
+          "ty_le_phi_san_aff_chua_thue": 0.22,
+          "ty_le_phi_gom_thue_khau_tru": 0.235
+        },
+        "ln_moi_don_dat": 29971.5,
+        "ln_truoc_qc_moi_don_dat": 44221.5,
+        "chi_phi_moi_don_huy": 8000,
+        "chi_ra_moi_don_dat": 70700.0,
+        "tien_ve_moi_don_dat": 98163.5,
+        "ngay_cho": 8,
+        "ngay_rut": 1,
+        "ngay_tre": 13
+      }
+    },
+    {
+      "id": "aff-01",
+      "loai": "affiliate",
+      "mo_ta": "Shopee: hoa hồng 200.000 < ngưỡng, chi phí nội dung 20.000",
+      "dau_vao": {
+        "hoa_hong_goc": 200000,
+        "chi_phi_noi_dung": 20000
+      },
+      "mong_doi": {
+        "san": "Shopee",
+        "hoa_hong_goc": 200000,
+        "phi_nen_tang": 1960.0,
+        "sau_phi": 198040.0,
+        "co_khau_tru_thue": false,
+        "thue_khau_tru": 0.0,
+        "sau_thue": 198040.0,
+        "chi_phi_noi_dung": 20000,
+        "thuc_nhan": 178040.0
+      }
+    },
+    {
+      "id": "aff-02",
+      "loai": "affiliate",
+      "mo_ta": "Shopee: hoa hồng đúng 250.000 → bị khấu trừ 10% (vách ngưỡng)",
+      "dau_vao": {
+        "hoa_hong_goc": 250000
+      },
+      "mong_doi": {
+        "san": "Shopee",
+        "hoa_hong_goc": 250000,
+        "phi_nen_tang": 2450.0,
+        "sau_phi": 247550.0,
+        "co_khau_tru_thue": true,
+        "thue_khau_tru": 24755.0,
+        "sau_thue": 222795.0,
+        "chi_phi_noi_dung": 0.0,
+        "thuc_nhan": 222795.0
+      }
+    },
+    {
+      "id": "aff-03",
+      "loai": "affiliate",
+      "mo_ta": "Shopee: 1.200.000, chi phí nội dung 300.000",
+      "dau_vao": {
+        "hoa_hong_goc": 1200000,
+        "chi_phi_noi_dung": 300000
+      },
+      "mong_doi": {
+        "san": "Shopee",
+        "hoa_hong_goc": 1200000,
+        "phi_nen_tang": 11760.0,
+        "sau_phi": 1188240.0,
+        "co_khau_tru_thue": true,
+        "thue_khau_tru": 118824.0,
+        "sau_thue": 1069416.0,
+        "chi_phi_noi_dung": 300000,
+        "thuc_nhan": 769416.0
+      }
+    },
+    {
+      "id": "aff-04",
+      "loai": "affiliate",
+      "mo_ta": "Shopee: 251.000, ngưỡng so SAU phí 0,98% → 248.540 < 250.000, không khấu trừ",
+      "dau_vao": {
+        "hoa_hong_goc": 251000,
+        "nguong_tinh_tren": "sau_phi"
+      },
+      "mong_doi": {
+        "san": "Shopee",
+        "hoa_hong_goc": 251000,
+        "phi_nen_tang": 2459.8,
+        "sau_phi": 248540.2,
+        "co_khau_tru_thue": false,
+        "thue_khau_tru": 0.0,
+        "sau_thue": 248540.2,
+        "chi_phi_noi_dung": 0.0,
+        "thuc_nhan": 248540.2
+      }
+    },
+    {
+      "id": "aff-05",
+      "loai": "affiliate",
+      "mo_ta": "TikTok: chưa xác minh → dùng tạm luật Shopee",
+      "dau_vao": {
+        "hoa_hong_goc": 500000,
+        "san": "tiktok",
+        "chi_phi_noi_dung": 50000
+      },
+      "mong_doi": {
+        "san": "TikTok Shop",
+        "hoa_hong_goc": 500000,
+        "phi_nen_tang": 4900.0,
+        "sau_phi": 495100.0,
+        "co_khau_tru_thue": true,
+        "thue_khau_tru": 49510.0,
+        "sau_thue": 445590.0,
+        "chi_phi_noi_dung": 50000,
+        "thuc_nhan": 395590.0
+      }
+    },
+    {
+      "id": "aff-don-01",
+      "loai": "affiliate_tu_don",
+      "mo_ta": "40 đơn × 150.000 × 10%, hủy/hoàn 10%, nội dung 100.000 (gộp một kỳ)",
+      "dau_vao": {
+        "gia_tri_don": 150000,
+        "ty_le_hoa_hong": 10,
+        "so_don": 40,
+        "ty_le_huy_hoan": 10,
+        "chi_phi_noi_dung": 100000
+      },
+      "mong_doi": {
+        "san": "Shopee",
+        "hoa_hong_goc": 540000.0,
+        "phi_nen_tang": 5292.0,
+        "sau_phi": 534708.0,
+        "co_khau_tru_thue": true,
+        "thue_khau_tru": 53470.8,
+        "sau_thue": 481237.2,
+        "chi_phi_noi_dung": 100000,
+        "thuc_nhan": 381237.2
+      }
+    },
+    {
+      "id": "von-01",
+      "loai": "von_ung_truoc",
+      "mo_ta": "Vốn ứng trước: 5 đơn/ngày × 77.000 chi ra, tiền về 117.180 sau 8 ngày",
+      "dau_vao": {
+        "don_moi_ngay": 5,
+        "chi_ra_moi_don": 77000,
+        "tien_ve_moi_don": 117180,
+        "ngay_tre": 8,
+        "so_ngay": 56
+      },
+      "mong_doi": {
+        "von_ung_truoc_can": 3080000.0,
+        "ngay_am_sau_nhat": 7,
+        "ngay_so_du_cong_don_ve_0": 23,
+        "so_du_cuoi_ky": 6563200.0,
+        "so_ngay_mo_phong": 56
+      }
+    },
+    {
+      "id": "von-02",
+      "loai": "von_ung_truoc",
+      "mo_ta": "Vốn ứng trước: tiền về < chi ra (lỗ) → số dư âm mãi",
+      "dau_vao": {
+        "don_moi_ngay": 3,
+        "chi_ra_moi_don": 100000,
+        "tien_ve_moi_don": 90000,
+        "ngay_tre": 5,
+        "so_ngay": 30
+      },
+      "mong_doi": {
+        "von_ung_truoc_can": 2250000.0,
+        "ngay_am_sau_nhat": 29,
+        "ngay_so_du_cong_don_ve_0": null,
+        "so_du_cuoi_ky": -2250000.0,
+        "so_ngay_mo_phong": 30
+      }
+    },
+    {
+      "id": "so-01",
+      "loai": "so_lai_lo",
+      "mo_ta": "Sổ mini: cổng 4 tuần ĐẠT nhưng cộng dồn từ đầu LỖ (gói công cụ phân bổ)",
+      "dau_vao": {
+        "ngay_cuoi": "2026-12-28",
+        "so_ngay": 28,
+        "dong": [
+          {
+            "ngay": "2026-11-02",
+            "thu_chi": "chi",
+            "loai": "cong_cu",
+            "mo_hinh": "chung",
+            "kenh": "chung",
+            "so_tien_vnd": "5600000",
+            "phan_bo_tu": "2026-11-02",
+            "phan_bo_den": "2026-12-28",
+            "mo_ta": "GIA DINH",
+            "nguon": "GIA DINH"
+          },
+          {
+            "ngay": "2026-11-10",
+            "thu_chi": "chi",
+            "loai": "hang_mau",
+            "mo_hinh": "dropship",
+            "kenh": "shopee",
+            "so_tien_vnd": "1500000",
+            "mo_ta": "GIA DINH",
+            "nguon": "GIA DINH"
+          },
+          {
+            "ngay": "2026-12-10",
+            "thu_chi": "thu",
+            "loai": "doanh_thu_don",
+            "mo_hinh": "dropship",
+            "kenh": "shopee",
+            "so_tien_vnd": "6000000",
+            "mo_ta": "GIA DINH",
+            "nguon": "GIA DINH"
+          },
+          {
+            "ngay": "2026-12-10",
+            "thu_chi": "chi",
+            "loai": "gia_von_ncc",
+            "mo_hinh": "dropship",
+            "kenh": "shopee",
+            "so_tien_vnd": "2400000",
+            "mo_ta": "GIA DINH",
+            "nguon": "GIA DINH"
+          },
+          {
+            "ngay": "2026-12-20",
+            "thu_chi": "thu",
+            "loai": "hoa_hong_affiliate",
+            "mo_hinh": "affiliate",
+            "kenh": "shopee",
+            "so_tien_vnd": "400000",
+            "mo_ta": "GIA DINH",
+            "nguon": "GIA DINH"
+          }
+        ]
+      },
+      "mong_doi": {
+        "cua_so_4_tuan": {
+          "tu": "2026-12-01",
+          "den": "2026-12-28",
+          "thu": 6400000,
+          "chi": 5150877,
+          "lai_rong": 1249123,
+          "theo_mo_hinh": {
+            "affiliate": 400000,
+            "chung": -2750877,
+            "dropship": 3600000
+          },
+          "theo_loai": {
+            "cong_cu": -2750877,
+            "doanh_thu_don": 6000000,
+            "gia_von_ncc": -2400000,
+            "hoa_hong_affiliate": 400000
+          }
+        },
+        "tu_dau_du_an": {
+          "tu": "2026-11-02",
+          "den": "2026-12-28",
+          "thu": 6400000,
+          "chi": 9500000,
+          "lai_rong": -3100000,
+          "theo_mo_hinh": {
+            "affiliate": 400000,
+            "chung": -5600000,
+            "dropship": 2100000
+          },
+          "theo_loai": {
+            "cong_cu": -5600000,
+            "doanh_thu_don": 6000000,
+            "gia_von_ncc": -2400000,
+            "hang_mau": -1500000,
+            "hoa_hong_affiliate": 400000
+          }
+        },
+        "dat_cong_dot1": true
+      }
+    }
+  ]
+}
