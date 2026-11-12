@@ -1,0 +1,1 @@
+quote_id,product_id,supplier_id,unit_cost_vnd,moq,ship_cost_per_unit_vnd,currency,fx_rate,quoted_at,valid_until,source_id,captured_at

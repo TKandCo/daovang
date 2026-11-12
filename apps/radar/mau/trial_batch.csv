@@ -1,0 +1,1 @@
+batch_id,product_id,supplier_id,qty,cost_total_usd,start_date,end_date,orders,returns,net_margin_real_pct,decision,owner_approved,source_id,captured_at
