@@ -30,7 +30,7 @@ Quyết định của chủ dự án (12/11/2026, trong phiên):
 
 ## 2. Bảng giá (tra 12/11/2026)
 ### Metric.vn — đa sàn (Shopee, TikTok Shop, Lazada, Tiki). Giá chính thức [CAO] — S22
-Trang giá chỉ hiện chữ khi mở bằng trình duyệt, nên tôi mở trang giá công khai của Metric một lần bằng trình duyệt tự động. Không đăng nhập, không tạo tài khoản.
+**KTS chưa tự mở được trang này** (công cụ tìm kiếm không trả trang giá) → chủ dự án nên tự mở https://metric.vn/analytics/pricing để xác nhận. Trang giá chỉ hiện chữ khi mở bằng trình duyệt, nên tôi mở trang giá công khai của Metric một lần bằng trình duyệt tự động. Không đăng nhập, không tạo tài khoản.
 
 | Gói "Ecom Analytics" | Thời hạn | Lượt phân tích | Advanced (lịch sử số liệu 1 năm) | Premium (lịch sử 2 năm) |
 |---|---|---|---|---|
@@ -47,9 +47,9 @@ Trang giá chỉ hiện chữ khi mở bằng trình duyệt, nên tôi mở tra
 - Metric Omni Analytics (TikTok video, quảng cáo Facebook — **không phải dữ liệu sàn Shopee**): dùng thử 100 credits trong 5 ngày; Advanced 12 triệu đ/năm; Premium 24 triệu đ/năm (S23, [CAO]).
 - Liên hệ: 033 806 2221 · info@metric.vn (trên trang chính thức).
 
-### FastMoss — chủ yếu TikTok Shop. Giá [TB] — S25
+### FastMoss — chủ yếu TikTok Shop. Giá [THẤP] — S25 (hạ từ [TB] sau audit KTS vòng 2: có nguồn ghi 59/109 hoặc 59/299 USD)
 - Basic 49 USD/tháng (**tháng đầu 29 USD**); Pro 89 USD; Ultimate 139 USD. Thêm người dùng phải trả thêm tiền.
-- Nguồn: blog của chính FastMoss và một trang so sánh (tra 10/2026), hai nguồn khớp nhau.
+- Nguồn: blog của chính FastMoss và một trang so sánh (tra 10/2026) khớp nhau; nhưng TrustRadius / SaaSWorthy ghi khác → mâu thuẫn. "Tháng đầu 29 USD" KTS không xác nhận được.
 - Trang giá chính thức chặn bằng bước kiểm tra chống bot. **Tôi dừng, không vượt** (quy tắc 4).
 - Có bao phủ Shopee Việt Nam không: CHƯA XÁC MINH.
 
@@ -69,7 +69,7 @@ Trang giá chỉ hiện chữ khi mở bằng trình duyệt, nên tôi mở tra
 |---|---|---|
 | 1 | Tự làm lượt 1 cho 4 nhóm đã chọn: chủ dự án xem tay trang sàn và ghi vào `apps/radar/mau/` (P1 soạn sẵn bảng, có hướng dẫn); Google Trends | 0 đ |
 | 2 | Khi có ≥ 15 sản phẩm: **chủ dự án tự đăng ký dùng thử Metric 7 ngày** + eReport 7 ngày miễn phí. Gom hết sản phẩm cần tra vào tuần dùng thử | 0 đ |
-| 3 | Nếu cần thêm số TikTok Shop: FastMoss Basic **tháng đầu 29 USD**. Thẻ trả trước, tắt tự gia hạn, hủy sau 1 tháng | ≤ 29 USD (nằm trong trần 100 USD) |
+| 3 | Nếu cần thêm số TikTok Shop: FastMoss Basic **tháng đầu 29 USD [THẤP]**, hoặc 49 USD. Thẻ trả trước, tắt tự gia hạn, hủy sau 1 tháng | 29–59 USD [THẤP] (nằm trong trần 100 USD) |
 | 4 | Chỉ khi shop đã có doanh thu: cân nhắc Metric Starter 8 triệu đ/4 tháng | ≈ 308 USD — **vượt trần, cần chủ dự án duyệt riêng** |
 
 Trước bước 2–3, chủ dự án tự hỏi nhà cung cấp:
