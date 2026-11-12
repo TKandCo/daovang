@@ -7,7 +7,9 @@ import os
 import shutil
 import sys
 import tempfile
+import ntpath
 import unittest
+from unittest import mock
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import kiem_tra as kt  # noqa: E402
@@ -149,6 +151,51 @@ class KiemTra(unittest.TestCase):
                        "CHƯA ĐO", "CHƯA ĐO", "6", "26", "Shopee|phi_co_dinh|Van phong pham",
                        "", "theo_doi", "S04", "2026-11-12"])
         self.assertEqual(self.chay(), [])
+
+
+class KhacO(unittest.TestCase):
+    """Lỗi Windows (audit chuyến 1): repo ở D:, thư mục tạm ở C: → relpath báo ValueError.
+
+    Mô phỏng trên mọi máy: ntpath (bản Windows của os.path) và vá os.path.relpath để báo đúng lỗi đó.
+    """
+
+    def test_ntpath_khac_o_khong_hong(self):
+        # ntpath.relpath thật sự báo ValueError khi khác ổ — kiểm rằng hàm in đường dẫn đầy đủ
+        with self.assertRaises(ValueError):
+            ntpath.relpath("C:\\Temp\\x\\mau\\product.csv", "D:\\daovang")
+        ra = kt.ten_tep("C:\\Temp\\x\\mau\\product.csv", "D:\\daovang", p=ntpath)
+        self.assertEqual(ra, "C:\\Temp\\x\\mau\\product.csv")
+
+    def test_ntpath_cung_o_van_tuong_doi(self):
+        ra = kt.ten_tep("D:\\daovang\\apps\\radar\\mau\\a.csv", "D:\\daovang", p=ntpath)
+        self.assertEqual(ra, "apps\\radar\\mau\\a.csv")
+
+    def _relpath_khac_o(self, path, start=os.curdir):
+        raise ValueError("path is on mount 'C:', start on mount 'D:'")
+
+    def test_kiem_ca_bo_khi_khac_o(self):
+        tam = tempfile.mkdtemp()
+        try:
+            for d in ("mau", "du-lieu"):
+                shutil.copytree(os.path.join(kt.GOC, d), os.path.join(tam, d))
+            with mock.patch.object(kt.os.path, "relpath", self._relpath_khac_o):
+                so_tep, loi = kt.kiem_tat_ca(tam)
+                self.assertEqual(loi, [])
+                self.assertEqual(so_tep, 11)
+                # dữ liệu hỏng vẫn phải được báo (không văng ValueError)
+                p = os.path.join(tam, "du-lieu", "nhom-ung-vien.csv")
+                with open(p, encoding="utf-8", newline="") as f:
+                    r = list(csv.reader(f))
+                r[1][r[0].index("diem_so_bo")] = "99"
+                r[2][0] = r[1][0]
+                with open(p, "w", encoding="utf-8", newline="") as f:
+                    csv.writer(f).writerows(r)
+                _, loi = kt.kiem_tat_ca(tam)
+            self.assertTrue(any("khác tổng" in x for x in loi))
+            self.assertTrue(any("trùng mã" in x for x in loi))
+            self.assertTrue(all(os.path.isabs(x.split(" dòng ")[0]) for x in loi))
+        finally:
+            shutil.rmtree(tam)
 
 
 if __name__ == "__main__":

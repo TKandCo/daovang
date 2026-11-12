@@ -51,6 +51,18 @@ def ngay_that(v):
         return False
 
 
+def ten_tep(duong_dan, goc=REPO, p=os.path):
+    """Tên tệp để in trong thông báo lỗi.
+
+    Trên Windows, os.path.relpath báo ValueError khi hai đường dẫn ở HAI Ổ KHÁC NHAU
+    (vd thư mục tạm ở C:, repo ở D:). Khi đó in đường dẫn đầy đủ thay vì làm hỏng cả lượt kiểm.
+    """
+    try:
+        return p.relpath(duong_dan, goc)
+    except ValueError:
+        return p.abspath(duong_dan)
+
+
 def tach_ma(v):
     return [x.strip() for x in v.split(";") if x.strip()]
 
@@ -161,13 +173,13 @@ def kiem_bang(ten, duong_dan, nguon, bang_phi, loi):
         for i, h in enumerate(dong_s, start=2):
             if h and h[k].strip():
                 if h[k] in thay:
-                    loi.append(f"{os.path.relpath(duong_dan, REPO)} dòng {i}: trùng mã {h[k]}")
+                    loi.append(f"{ten_tep(duong_dan)} dòng {i}: trùng mã {h[k]}")
                 thay.add(h[k])
     if tieu_de != COT[ten]:
-        loi.append(f"{duong_dan}: sai cột.\n   cần: {COT[ten]}\n   có : {tieu_de}")
+        loi.append(f"{ten_tep(duong_dan)}: sai cột.\n   cần: {COT[ten]}\n   có : {tieu_de}")
         return
     for i, hang in enumerate(dong_s, start=2):
-        vt = f"{os.path.relpath(duong_dan, REPO)} dòng {i}"
+        vt = f"{ten_tep(duong_dan)} dòng {i}"
         if not any(c.strip() for c in hang):
             continue
         if len(hang) != len(tieu_de):
