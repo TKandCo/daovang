@@ -42,11 +42,11 @@ NHOM_LEGAL = {6, 10}
 
 
 def ngay_that(v):
+    """Ngày có thật và không ở tương lai (ngày ghi số không thể sau hôm nay)."""
     if not NGAY.match(v):
         return False
     try:
-        datetime.datetime.strptime(v, "%Y-%m-%d")
-        return True
+        return datetime.datetime.strptime(v, "%Y-%m-%d").date() <= datetime.date.today()
     except ValueError:
         return False
 
@@ -155,6 +155,14 @@ def kiem_nhom(d, nguon, loi, vt):
 
 def kiem_bang(ten, duong_dan, nguon, bang_phi, loi):
     tieu_de, dong_s = doc_csv(duong_dan)
+    if tieu_de and tieu_de == COT[ten]:
+        k = tieu_de.index(COT[ten][0])  # cột mã (cột đầu) không được trùng
+        thay = set()
+        for i, h in enumerate(dong_s, start=2):
+            if h and h[k].strip():
+                if h[k] in thay:
+                    loi.append(f"{os.path.relpath(duong_dan, REPO)} dòng {i}: trùng mã {h[k]}")
+                thay.add(h[k])
     if tieu_de != COT[ten]:
         loi.append(f"{duong_dan}: sai cột.\n   cần: {COT[ten]}\n   có : {tieu_de}")
         return
@@ -172,7 +180,7 @@ def kiem_bang(ten, duong_dan, nguon, bang_phi, loi):
             if not d[c].strip():
                 loi.append(f"{vt}: ô nguồn '{c}' trống")
         if d["captured_at"].strip() and not ngay_that(d["captured_at"].strip()):
-            loi.append(f"{vt}: captured_at '{d['captured_at']}' không phải ngày thật YYYY-MM-DD")
+            loi.append(f"{vt}: captured_at '{d['captured_at']}' không phải ngày thật YYYY-MM-DD (hoặc ở tương lai)")
         if ten == "source":
             if d["reliability"] not in DO_TIN_CAY:
                 loi.append(f"{vt}: reliability '{d['reliability']}' không hợp lệ")
@@ -181,7 +189,7 @@ def kiem_bang(ten, duong_dan, nguon, bang_phi, loi):
             if d["export_method"] not in CACH_LAY:
                 loi.append(f"{vt}: export_method '{d['export_method']}' ngoài danh sách")
             url = d["url"].strip()
-            if url.startswith(("http://", "https://")):
+            if re.match(r"^https?://[^/\s]+\.[^/\s]+", url):
                 pass
             elif url and os.path.exists(os.path.join(REPO, url)):
                 pass  # tệp trong repo (đường dẫn tương đối từ gốc repo)

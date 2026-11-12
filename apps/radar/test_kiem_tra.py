@@ -130,6 +130,19 @@ class KiemTra(unittest.TestCase):
         self.sua_o("du-lieu/source.csv", 19, "url", "bao-cao/khong-co.md")
         self.assertTrue(any("không phải tệp có trong repo" in x for x in self.chay()))
 
+    # --- Lỗ hổng KTS tìm ra khi kiểm lại (12/11/2026) ---
+    def test_ngay_tuong_lai(self):
+        self.sua_o("du-lieu/nhom-ung-vien.csv", 1, "captured_at", "2030-01-01")
+        self.assertTrue(any("tương lai" in x for x in self.chay()))
+
+    def test_url_rong(self):
+        self.sua_o("du-lieu/source.csv", 1, "url", "http://")
+        self.assertTrue(any("không phải link" in x for x in self.chay()))
+
+    def test_ma_nhom_trung(self):
+        self.sua_o("du-lieu/nhom-ung-vien.csv", 2, "nhom_id", "N01")
+        self.assertTrue(any("trùng mã N01" in x for x in self.chay()))
+
     def test_score_hop_le(self):
         self.ghi_dong("mau/score.csv",
                       ["SC1", "P1", "2026-11-12", "10", "CHƯA ĐO", "CHƯA ĐO", "10",
