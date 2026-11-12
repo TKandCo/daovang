@@ -326,7 +326,7 @@ class MayTinh:
                 return None  # tổng tỷ lệ phí ≥ 100% → không có giá hòa vốn
             if f(lo) >= 0:
                 return round(lo, 0)
-            for _ in range(100):
+            while hi - lo > 0.5:
                 mid = (lo + hi) / 2
                 if f(mid) >= 0:
                     hi = mid

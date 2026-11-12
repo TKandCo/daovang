@@ -8,6 +8,7 @@ from __future__ import annotations
 import csv
 import re
 import unicodedata
+from functools import lru_cache
 from dataclasses import dataclass, field
 from datetime import date, timedelta
 from pathlib import Path
@@ -24,6 +25,7 @@ class ThieuDuLieu(Exception):
     """Bảng phí không có dòng phù hợp / mức chưa xác minh / đầu vào thiếu."""
 
 
+@lru_cache(maxsize=4096)
 def bo_dau(s: str) -> str:
     s = s.replace("đ", "d").replace("Đ", "D")
     s = unicodedata.normalize("NFD", s)
