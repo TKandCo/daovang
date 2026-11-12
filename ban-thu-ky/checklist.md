@@ -3,11 +3,14 @@
 ## ✅ Đã làm
 - 10/11–11/11: phân tích 10 dự án AI (tài liệu "10 dự án AI bán được tiền thật"), chọn hướng video UGC.
 - 12/11: đổi hướng thành hệ sinh thái bán hàng online (Shopee → TikTok Shop), chủ dự án duyệt mở phòng theo đợt.
-- 12/11: soạn khung kho (CLAUDE.md, quy trình, mẫu, định nghĩa agent Đợt 0) — nằm trong thư mục tạm, CHƯA đưa vào repo.
+- 12/11: khung kho lên repo (d75f736); quy tắc 11–12 gộp (PR #1).
+- 12/11: Đợt 0 nghiên cứu xong: P1 ≈ 7,4 · P8 ≈ 8,1 · P4 ≈ 8,3 (bảng phí v1 79 dòng).
+- 12/11: 5 phòng cloud xong và đẩy nhánh: `phong/p1-dot0` (Radar v1, 11 kiểm thử) · `phong/p4-dot0` (máy tính lợi nhuận, 33 kiểm thử, kiểm ngược 12/12 khớp) · `phong/p8-dot0` (checklist 36 mục, 32 câu hỏi, 18 quy tắc video AI) · `phong/p9-dot0` (schema, lõi, quét khóa, 29 kiểm thử) · `phong/p12-dot0` (phản biện). KTS chạy lại: 73 kiểm thử đạt, gộp thử không xung đột.
 
 ## 🔄 Đang làm
-- Đợt 0 nghiên cứu (giao 12/11) XONG: P1 ≈ 7,4 (cần sửa nhỏ) · P8 ≈ 8,1 (đạt) · P4 ≈ 8,3 (đạt; bảng phí v1 79 dòng `bao-cao/dot0/bang-phi-v1.csv`).
-- Mô hình lai đã chốt (12/11). Đã yêu cầu mở 5 phiên cloud (12/11): P1 Radar v1 thủ công · P4 máy tính lợi nhuận · P8 checklist tuân thủ · P9 schema + quét khóa · P12 phản biện. Mỗi phòng nhánh `phong/<pN>-dot0` → PR, chủ dự án gộp sau audit.
+- Chuyến 1: CHỜ chủ dự án xem 5 nhánh rồi nói "gom chuyến".
+- Việc Đợt tiếp theo từ P12: P1 + P4 viết lại theo affiliate / dropship (công thức hoa hồng affiliate; thay "phí sàn ~24%" bằng phép tính máy P4 theo ngành, có / không voucher); P8 thêm mục dữ liệu cá nhân khách (trước Đợt 2); KTS kiểm mẫu ngẫu nhiên + đối chiếu chéo giữa các phòng.
+- P9 việc mới: app HTML kiểu Holygrail + kiểm khớp JS ↔ Python; GitHub Actions chạy khi PR.
 
 ## 📋 Cần làm
 - ✅ 12/11: repo riêng tư TKandCo/daovang, khung đã đẩy (commit d75f736).
@@ -18,9 +21,10 @@
 - Chọn 20 sản phẩm ứng viên + chấm điểm (P1).
 
 ## 🙋 Chờ chủ dự án
-- Mức vốn: A 1.000 USD · B 4.000 USD · C 12.000 USD.
-- Số giờ mỗi ngày dành cho bán hàng / đăng bài / trả lời khách.
-- Tên dự án / tên repo; đường dẫn thư mục repo để đưa khung vào.
+- ✅ Mức vốn A · 3 giờ / ngày · affiliate + dropship · app HTML · SQLite · GitHub Actions khi PR (12/11).
+- Xem 5 nhánh phòng → "gom chuyến".
+- Duyệt cổng Đợt 1 mới (lãi ròng cộng dồn dự án ≥ 0).
+- Chụp trang "ưu đãi người bán mới" (Kênh Người Bán, bài 2139) — dòng bảng phí duy nhất chưa có nguồn thứ hai.
 - Duyệt cổng qua Đợt 0.
 
 ## ⚠️ Rủi ro đang theo dõi
