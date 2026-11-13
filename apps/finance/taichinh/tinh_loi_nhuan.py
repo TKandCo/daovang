@@ -111,6 +111,9 @@ class KetQua:
     affiliate: Optional[dict]
     canh_bao: list[str]
     khong_dam_bao: str = DONG_KHONG_DAM_BAO
+    # P12 mục 2.2: tách rõ hai tỷ lệ để nhãn không gây hiểu nhầm (đơn giao thành công, trên Rev)
+    ty_le_phi_san_aff_chua_thue: float = 0.0  # (phí ngành + giao dịch + mỗi đơn + voucher sàn + affiliate) / Rev
+    ty_le_phi_gom_thue_khau_tru: float = 0.0  # như trên + thuế sàn khấu trừ (1,5%) / Rev
 
     def to_dict(self) -> dict:
         return asdict(self)
@@ -245,6 +248,7 @@ class MayTinh:
 
         tong = sum(c.so_tien for c in chi_phi)
         cm = rev - tong
+        phi_san_aff = f_pct / 100 * rev + t_pct / 100 * rev + H + v_tien + a_tien
 
         # ---- hoàn hàng ----
         r = dv.ty_le_hoan / 100
@@ -311,6 +315,8 @@ class MayTinh:
             ln=round(ln, 2), bien_rong=round(ln / rev, 6), roas_hoa_von=round(roas, 4) if roas else None,
             gia_hoa_von=gia_hv, gia_hoa_von_truoc_qc=gia_hv_tqc,
             thue_tam_khau_tru=round((1 - r) * k_tien, 2), affiliate=aff, canh_bao=cb,
+            ty_le_phi_san_aff_chua_thue=round(phi_san_aff / rev, 6),
+            ty_le_phi_gom_thue_khau_tru=round((phi_san_aff + k_tien) / rev, 6),
         )
 
     def _gia_hoa_von(self, dv: DauVao, qc_on: bool) -> Optional[float]:
