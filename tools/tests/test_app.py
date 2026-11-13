@@ -73,13 +73,13 @@ class TestDongGoi(unittest.TestCase):
         # Windows có thể đổi xuống dòng thành CRLF khi checkout
         with tempfile.TemporaryDirectory() as t:
             p = Path(t) / "daovang.html"
-            p.write_bytes(APP.read_bytes().replace(b"\n", b"\r\n"))
+            p.write_bytes(dg.chuan_xuong_dong(APP.read_bytes()).replace(b"\n", b"\r\n"))
             with redirect_stdout(io.StringIO()):
                 self.assertEqual(dg.main(["--kiem", "--ra", str(p)]), 0)
 
     def test_moi_tep_nguon_crlf_van_dat(self):
         """KTS 13/11: mọi tệp nguồn (khung.html, *.js, bảng phí CSV) và tệp app đều CRLF → vẫn ĐẠT, cùng mã băm."""
-        crlf = lambda b: b.replace(b"\r\n", b"\n").replace(b"\n", b"\r\n")  # noqa: E731
+        crlf = lambda b: dg.chuan_xuong_dong(b).replace(b"\n", b"\r\n")  # noqa: E731
         with tempfile.TemporaryDirectory() as t:
             t = Path(t)
             (t / "src").mkdir()
@@ -88,7 +88,7 @@ class TestDongGoi(unittest.TestCase):
             (t / "bp.csv").write_bytes(crlf(CSV.read_bytes()))
             (t / "app.html").write_bytes(crlf(APP.read_bytes()))
             self.assertIn(b"\r\n", (t / "bp.csv").read_bytes())
-            self.assertEqual(dg.dung(t / "bp.csv", t / "src"), APP.read_bytes().decode("utf-8"))
+            self.assertEqual(dg.dung(t / "bp.csv", t / "src"), dg.doc(APP))
             self.assertEqual(dg.du_lieu_bang_phi(t / "bp.csv")["sha256"], dg.du_lieu_bang_phi()["sha256"])
             with mock.patch.object(dg, "NGUON", t / "src"):
                 with redirect_stdout(io.StringIO()):
