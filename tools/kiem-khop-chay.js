@@ -21,7 +21,7 @@ const mt = new TC.MayTinh(new TC.BangPhi(JSON.parse(lay("bang-phi"))));
 const viDu = JSON.parse(fs.readFileSync(0, "utf8"));
 const ra = viDu.map((v) => {
   try {
-    return { ok: JSON.parse(JSON.stringify(mt.tinh(v.dau_vao))) };
+    return { ok: JSON.parse(JSON.stringify(TC.chayViDu(mt, v.loai, v.dau_vao))) };
   } catch (e) {
     return { loi: (e && e.name) || "Error", thong_diep: String(e && e.message) };
   }
