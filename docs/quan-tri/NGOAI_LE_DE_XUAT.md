@@ -16,3 +16,5 @@ Tất cả chỉ là ĐỀ XUẤT, trạng thái: **chờ chủ dự án duyệt
 Ghi chú: các quy tắc KAD (không áp dụng) không cần ngoại lệ vì chưa có thành phần liên quan; chúng chuyển thành bắt buộc khi thành phần xuất hiện.
 
 **Cập nhật 13/11/2026 (CP xác nhận):** theo tài liệu GitHub, gói Free chỉ cho bảo vệ nhánh / rulesets trên repo CÔNG KHAI; TKandCo nhiều khả năng ở gói Free → với repo riêng tư daovang, QT-02 cần MỘT trong hai: (a) nâng gói GitHub Team (có phí, chủ dự án quyết), hoặc (b) duyệt ngoại lệ số 1 ở trên với biện pháp bù: KTS hậu kiểm mỗi chuyến + Trạm Kiểm Định báo mọi commit vào main không qua PR. Chưa kiểm gói thật của tài khoản. CP đã đưa vào danh sách quyết định chung của chủ dự án.
+
+**13/11/2026:** chủ dự án DUYỆT ngoại lệ QT-02 (phương án b) — đã ghi vào `NGOAI_LE.md`. Các đề xuất còn lại vẫn chờ duyệt.
