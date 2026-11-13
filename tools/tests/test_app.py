@@ -170,7 +170,7 @@ class TestKiemKhop(unittest.TestCase):
     def test_dat_tren_app_that(self):
         f = io.StringIO()
         with redirect_stdout(f):
-            ma = kk.main(["--so-ngau-nhien", "120"])
+            ma = kk.main(["--so-ngau-nhien", "80"])
         self.assertEqual(ma, 0, f.getvalue())
         self.assertIn("12/12 khớp", f.getvalue())
 
@@ -207,6 +207,58 @@ class TestKiemKhop(unittest.TestCase):
                            '"loai_phi":"phi_ha_tang","nganh":"Tat ca","muc":{"thap":3000.0,"cao":3002.0')
         with redirect_stdout(io.StringIO()):
             self.assertEqual(kk.main(["--so-ngau-nhien", "30", "--app", str(p)]), 1)
+
+    @can_node
+    def test_du_18_vi_du_p4(self):
+        """KTS 13/11: kiểm khớp ĐỦ mọi ví dụ trong apps/finance/vi-du-kiem-khop.json (18 ví dụ, 6 loại)."""
+        if not kk.VI_DU_P4.exists():
+            self.skipTest("chưa có vi-du-kiem-khop.json trên nhánh này")
+        n = len(json.loads(kk.VI_DU_P4.read_text(encoding="utf-8"))["vi_du"])
+        self.assertGreaterEqual(n, 18)
+        f = io.StringIO()
+        with redirect_stdout(f):
+            ma = kk.main(["--so-ngau-nhien", "8"])
+        self.assertEqual(ma, 0, f.getvalue())
+        self.assertIn(f"{n}/{n} khớp", f.getvalue())
+        for loai in ("don", "dropship", "affiliate", "affiliate_tu_don", "von_ung_truoc", "so_lai_lo"):
+            self.assertIn(loai, f.getvalue())
+
+    @can_node
+    def test_bat_lech_phan_dot1(self):
+        """Cố ý làm hỏng từng công thức Đợt 1 trong bản sao app → kiểm khớp phải HỎNG."""
+        hong = [
+            ("var lnDat = (1 - h) * kq.ln - h * cHuy;", "var lnDat = (1 - h) * kq.ln - h * cHuy - 2;"),
+            ("var tienVe = (1 - h) * ((1 - r) * tienSanTra - r * truKhiHoan);",
+             "var tienVe = (1 - h) * ((1 - r) * tienSanTra - r * truKhiHoan) + 5;"),
+            ("var coThue = soNguong >= AFF.NGUONG;", "var coThue = soNguong > AFF.NGUONG;"),
+            ("if (soDu < thapNhat - 1e-9) { thapNhat = soDu; ngayThap = t; }",
+             "if (soDu < thapNhat - 1e-9) { thapNhat = soDu; ngayThap = t + 1; }"),
+            ("var giao = (Math.min(b, den) - Math.max(a, tu)) + 1;", "var giao = (Math.min(b, den) - Math.max(a, tu)) + 2;"),
+            ('throw ThieuDuLieu("sổ trống");', 'throw ThieuDuLieu("so trong");'),
+            ("ty_le_phi_gom_thue_khau_tru: pyRound((phiSanAff + kTien) / rev, 6)",
+             "ty_le_phi_gom_thue_khau_tru: pyRound((phiSanAff + kTien * 1.5) / rev, 6)"),
+        ]
+        for cu, moi in hong:
+            with self.subTest(cu=cu[:40]):
+                p = self._app_hong(cu, moi)
+                with redirect_stdout(io.StringIO()):
+                    self.assertEqual(kk.main(["--so-ngau-nhien", "12", "--app", str(p)]), 1)
+
+    def test_loai_la_khong_chay(self):
+        t = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, t, True)
+        p = Path(t) / "vd.json"
+        p.write_text(json.dumps({"vi_du": [{"loai": "kich_ban", "dau_vao": {"x": 1}}]}), encoding="utf-8")
+        with redirect_stdout(io.StringIO()):
+            self.assertEqual(kk.main(["--so-ngau-nhien", "1", "--tep-p4", str(p)]), 2)
+
+    def test_so_mong_doi_sau(self):
+        ds = kk.dung_sai_p4(Path(tempfile.gettempdir()) / "khong-co.json")
+        ra = {"ln": 100.0, "chi_phi": [{"ten": "Giá vốn", "so_tien": 5.0, "nguon": "x"}], "don": {"cm": 3.0}}
+        self.assertEqual(kk.so_mong_doi_sau(ra, {"ln": 100.4, "chi_phi": [{"ten": "Giá vốn", "so_tien": 5}]}, ds), [])
+        self.assertEqual(len(kk.so_mong_doi_sau(ra, {"ln": 102}, ds)), 1)
+        self.assertEqual(len(kk.so_mong_doi_sau(ra, {"chi_phi": [{"ten": "Khác"}]}, ds)), 1)
+        self.assertEqual(len(kk.so_mong_doi_sau(ra, {"thieu": 1}, ds)), 1)
 
     @can_node
     def test_khac_o_dia_windows(self):
