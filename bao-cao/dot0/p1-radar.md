@@ -2,7 +2,7 @@
 Ngày: 12/11/2026 (sửa theo audit 12/11/2026 — xem mục 5 và `p1-radar-v2.md`) · Người lập: Trưởng phòng P1 · Phạm vi: nguồn dữ liệu HỢP PHÁP cho "Radar sản phẩm"
 
 Nhãn độ tin cậy: [CAO] nguồn chính thức · [TB] nhiều nguồn khớp · [THẤP] một nguồn / mâu thuẫn · CHƯA XÁC MINH = không tìm được.
-Giới hạn nghiên cứu: các trang tài liệu chính thức của Shopee Open Platform (open.shopee.com) và TikTok Shop Partner Center (JavaScript) KHÔNG đọc được bằng công cụ; trang giá của Kalodata/FastMoss/Metric không công khai giá. Vì vậy nhiều mục chỉ đạt [TB]/[THẤP] và phải xác minh tay (xem mục 8).
+Giới hạn nghiên cứu: các trang tài liệu chính thức của Shopee Open Platform (open.shopee.com) và TikTok Shop Partner Center (JavaScript) KHÔNG đọc được bằng công cụ; trang giá của Kalodata/FastMoss/Metric không đọc được lúc lập báo cáo này (đã cập nhật: Metric có bảng giá công khai, xem `p1-cong-cu-so-lieu.md`). Vì vậy nhiều mục chỉ đạt [TB]/[THẤP] và phải xác minh tay (xem mục 8).
 
 ---
 
