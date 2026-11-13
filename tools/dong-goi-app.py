@@ -47,10 +47,15 @@ def du_lieu_bang_phi(csv_path: Path = CSV_MAC_DINH) -> dict:
             "nguon": d.nguon, "do_tin_cay": d.do_tin_cay, "ghi_chu": d.ghi_chu,
             "canh_bao": list(d.canh_bao), "suy_tu_ghi_chu": d.suy_tu_ghi_chu,
         })
-    sha = hashlib.sha256(Path(csv_path).read_bytes()).hexdigest()
+    # băm trên nội dung đã chuẩn hóa xuống dòng (LF): Windows checkout ra CRLF vẫn cho cùng mã
+    sha = hashlib.sha256(chuan_xuong_dong(Path(csv_path).read_bytes())).hexdigest()
     # đường dẫn ghi dạng chữ cố định (không tính đường dẫn tương đối → không lỗi khi khác ổ đĩa trên Windows)
     return {"nguon_tep": "bao-cao/dot0/bang-phi-v1.csv", "sha256": sha, "so_dong_csv": sum(1 for d in bp.dong if not d.suy_tu_ghi_chu),
             "dong": dong}
+
+
+def chuan_xuong_dong(b: bytes) -> bytes:
+    return b.replace(b"\r\n", b"\n").replace(b"\r", b"\n")
 
 
 def json_an_toan(obj) -> str:
@@ -61,7 +66,7 @@ def json_an_toan(obj) -> str:
 
 
 def doc(p: Path) -> str:
-    return p.read_text(encoding="utf-8")
+    return chuan_xuong_dong(p.read_bytes()).decode("utf-8")
 
 
 def dung(csv_path: Path = CSV_MAC_DINH, nguon: Path = NGUON) -> str:
@@ -85,10 +90,10 @@ def main(argv=None) -> int:
     ap.add_argument("--bang-phi", default=str(CSV_MAC_DINH), help="CSV bảng phí")
     ap.add_argument("--ra", default=str(DICH), help="tệp ghi ra")
     a = ap.parse_args(argv)
-    moi = dung(Path(a.bang_phi))
+    moi = dung(Path(a.bang_phi), NGUON)
     dich = Path(a.ra)
     if a.kiem:
-        cu = dich.read_text(encoding="utf-8").replace("\r\n", "\n") if dich.exists() else ""
+        cu = doc(dich) if dich.exists() else ""
         if cu != moi:
             print("HỎNG: app/daovang.html CŨ so với app/src hoặc bảng phí. Chạy: python3 tools/dong-goi-app.py")
             return 1
