@@ -39,6 +39,7 @@ Phòng mở THEO ĐỢT (`quy-trinh/lich-mo-phong.md`); tối đa 3 phòng xây 
 ## Audit
 KTS trưởng audit TRỰC TIẾP: chạy lại kết quả, đọc mã / dữ liệu thô, đối chiếu mẫu ngẫu nhiên (≥ 20%/tuần), không chỉ đọc báo cáo.
 Phòng P12 (phản biện) độc lập, báo thẳng KTS. Bằng chứng = chạy được, đo được, có nguồn; không tính "tự đánh giá".
+**Đa dạng mô hình (chủ dự án quyết định 13/11/2026):** phòng LÀM và Tổng quản dùng mô hình mặc định của phiên; KTS trưởng audit bằng mô hình KHÁC (Sonnet, `.claude/agents/kts-truong.md`), P12 phản biện bằng mô hình KHÁC nữa (Fable, `.claude/agents/p12-phan-bien.md`). KTS / P12 KHÔNG được xem kết luận của Tổng quản trước khi tự kiểm. Vẫn cùng một hãng AI → độc lập một phần; lớp độc lập thật là kiểm thử tự động + chủ dự án kiểm chọn mẫu.
 
 ## Báo cáo
 Cuối mỗi lượt: một dòng trạng thái (việc xong / đang làm / chờ chủ dự án). Cuối tuần: Tổng quản gửi chủ dự án MỘT trang
