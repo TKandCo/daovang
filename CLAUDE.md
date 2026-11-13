@@ -48,6 +48,11 @@ KTS trưởng audit TRỰC TIẾP: chạy lại kết quả, đọc mã / dữ l
 Phòng P12 (phản biện) độc lập, báo thẳng KTS. Bằng chứng = chạy được, đo được, có nguồn; không tính "tự đánh giá".
 **Đa dạng mô hình (chủ dự án quyết định 13/11/2026):** phòng LÀM và Tổng quản dùng mô hình mặc định của phiên; KTS trưởng audit bằng mô hình KHÁC (Sonnet, `.claude/agents/kts-truong.md`), P12 phản biện bằng mô hình KHÁC nữa (Fable, `.claude/agents/p12-phan-bien.md`). KTS / P12 KHÔNG được xem kết luận của Tổng quản trước khi tự kiểm. Vẫn cùng một hãng AI → độc lập một phần; lớp độc lập thật là kiểm thử tự động + chủ dự án kiểm chọn mẫu.
 
+## Tiêu chuẩn chung
+Theo **Bộ tiêu chuẩn code chung v1.0** của CP (`docs/quan-tri/TIEU_CHUAN_CODE.md`), **HẠNG A từ 13/11/2026** (chủ dự án duyệt trong phiên Tổng quản).
+Tự chấm: `docs/quan-tri/TU_CHAM_TIEU_CHUAN.md` · Ngoại lệ (chỉ chủ dự án duyệt): `docs/quan-tri/NGOAI_LE.md`. Quy tắc riêng của Đào Vàng ở trên vẫn áp dụng;
+chỗ nào tiêu chuẩn chặt hơn thì theo tiêu chuẩn. Không sửa tệp tiêu chuẩn tại đây — bản gốc do CP giữ.
+
 ## Báo cáo
 Cuối mỗi lượt: một dòng trạng thái (việc xong / đang làm / chờ chủ dự án). Cuối tuần: Tổng quản gửi chủ dự án MỘT trang
 (tiến độ, tiền đã chi, việc chờ duyệt, rủi ro, đề xuất mới).
