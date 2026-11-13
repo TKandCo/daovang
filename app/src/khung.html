@@ -121,12 +121,42 @@ button.xoa{border-color:var(--lo);color:var(--lo)}
         <div><label for="thue_aff">Thuế trên hoa hồng affiliate (%)</label><input id="thue_aff" type="text" inputmode="decimal" data-loai="pct" placeholder="0"></div>
       </div>
     </details>
+
+    <label class="chon"><input id="la_dropship" type="checkbox"> Dropship (nhà cung cấp giao hàng thay shop)</label>
+    <div id="o-dropship" class="an">
+      <p class="ghi">Giá vốn ở trên = giá nhà cung cấp (NCC). Mọi số là GIẢ ĐỊNH bạn nhập.</p>
+      <div class="hang">
+        <div><label for="ds_phi_ncc">Phí NCC mỗi đơn (đ)</label><input id="ds_phi_ncc" type="text" inputmode="numeric" data-loai="tien" placeholder="0"></div>
+        <div><label for="ds_ty_le_huy">Tỷ lệ hủy (%)</label><input id="ds_ty_le_huy" type="text" inputmode="decimal" data-loai="pct" placeholder="0"></div>
+        <div><label for="ds_chi_phi_moi_don_huy">Mất mỗi đơn hủy (đ)</label><input id="ds_chi_phi_moi_don_huy" type="text" inputmode="numeric" data-loai="tien" data-rong="null" placeholder="= phí NCC"></div>
+        <div><label for="ds_ngay_giao">Số ngày giao</label><input id="ds_ngay_giao" type="text" inputmode="numeric" data-loai="tien" placeholder="3"></div>
+        <div><label for="ds_loai_shop">Loại shop (tiền về)</label>
+          <select id="ds_loai_shop"><option value="moi">Shop mới</option><option value="thuong">Đã qua giai đoạn mới</option><option value="mall">Mall (TikTok)</option><option value="rui_ro">Bị giữ tiền (rủi ro)</option></select></div>
+        <div><label for="ds_don_moi_ngay">Đơn / ngày (tính vốn)</label><input id="ds_don_moi_ngay" type="text" inputmode="numeric" data-loai="tien" placeholder="5"></div>
+      </div>
+    </div>
     <p class="ghi">Nhập liệu tự lưu trên máy này (trình duyệt). Không nhập tên, số điện thoại, địa chỉ khách vào đây.</p>
   </section>
 
   <section class="the" id="o-ket-qua" aria-label="Kết quả" aria-live="polite">
     <h2>Kết quả</h2>
     <div id="ket-qua"></div>
+  </section>
+
+  <section class="the" aria-label="Affiliate">
+    <h2>Affiliate — hoa hồng thực nhận</h2>
+    <p class="ghi">Bán hộ, không nhập hàng. Tính tiền thực về sau phí nền tảng 0,98%, thuế 10% (khi khoản ≥ 250.000đ) và chi phí làm nội dung.</p>
+    <div class="hang">
+      <div><label for="aff_gia_tri_don">Giá trị mỗi đơn (đ)</label><input id="aff_gia_tri_don" type="text" inputmode="numeric" data-loai="tien" placeholder="150.000"></div>
+      <div><label for="aff_ty_le_hoa_hong">Hoa hồng (%)</label><input id="aff_ty_le_hoa_hong" type="text" inputmode="decimal" data-loai="pct" placeholder="10"></div>
+      <div><label for="aff_so_don">Số đơn trong kỳ</label><input id="aff_so_don" type="text" inputmode="numeric" data-loai="tien" placeholder="1"></div>
+      <div><label for="aff_ty_le_huy_hoan">Hủy / hoàn (%)</label><input id="aff_ty_le_huy_hoan" type="text" inputmode="decimal" data-loai="pct" placeholder="0"></div>
+      <div><label for="aff_chi_phi_noi_dung">Chi phí nội dung (đ)</label><input id="aff_chi_phi_noi_dung" type="text" inputmode="numeric" data-loai="tien" placeholder="0"></div>
+      <div><label for="aff_san">Sàn</label><select id="aff_san"><option value="shopee">Shopee</option><option value="tiktok">TikTok Shop</option></select></div>
+    </div>
+    <label for="aff_nguong">Ngưỡng 250.000đ so với</label>
+    <select id="aff_nguong"><option value="truoc_phi">Hoa hồng gốc (thận trọng)</option><option value="sau_phi">Hoa hồng sau phí 0,98%</option></select>
+    <div id="aff-ket-qua" style="margin-top:12px"></div>
   </section>
 
   <section class="the so-sku" aria-label="Sổ SKU">

@@ -15,6 +15,13 @@
     "hoa_hong_aff_nhan", "thue_aff"];
   var O_CHON = ["san", "nganh", "ngay_ban", "che_do_khoang"];
   var O_TICK = ["tham_gia_voucher_san", "shop_moi_mien_phi_co_dinh", "bo_phi_ha_tang"];
+  var DS_SO = ["ds_phi_ncc", "ds_ty_le_huy", "ds_chi_phi_moi_don_huy", "ds_ngay_giao", "ds_don_moi_ngay"];
+  var AFF_SO = ["aff_gia_tri_don", "aff_ty_le_hoa_hong", "aff_so_don", "aff_ty_le_huy_hoan", "aff_chi_phi_noi_dung"];
+  var MAC_DINH_CHON = { ds_loai_shop: "moi", aff_san: "shopee", aff_nguong: "truoc_phi" };
+  // ô được lưu (localStorage, sổ SKU, bản sao lưu)
+  var LUU_SO = O_SO.concat(DS_SO, AFF_SO);
+  var LUU_CHON = O_CHON.concat(Object.keys(MAC_DINH_CHON));
+  var LUU_TICK = O_TICK.concat(["la_dropship"]);
 
   // ---- lưu trữ (bọc try/catch: chế độ ẩn danh có thể chặn) ----
   function docKho() {
@@ -81,9 +88,9 @@
   // ---- đọc / ghi form ----
   function layForm() {
     var f = {};
-    O_CHON.forEach(function (k) { f[k] = $(k).value; });
-    O_SO.forEach(function (k) { f[k] = $(k).value; });
-    O_TICK.forEach(function (k) { f[k] = $(k).checked; });
+    LUU_CHON.forEach(function (k) { f[k] = $(k).value; });
+    LUU_SO.forEach(function (k) { f[k] = $(k).value; });
+    LUU_TICK.forEach(function (k) { f[k] = $(k).checked; });
     return f;
   }
   function datForm(f) {
@@ -92,8 +99,9 @@
     napNganh(f.nganh);
     $("ngay_ban").value = f.ngay_ban || TC.homNay();
     $("che_do_khoang").value = f.che_do_khoang || "cao";
-    O_SO.forEach(function (k) { $(k).value = f[k] === undefined || f[k] === null ? "" : String(f[k]); });
-    O_TICK.forEach(function (k) { $(k).checked = !!f[k]; });
+    Object.keys(MAC_DINH_CHON).forEach(function (k) { $(k).value = f[k] || MAC_DINH_CHON[k]; });
+    LUU_SO.forEach(function (k) { $(k).value = f[k] === undefined || f[k] === null ? "" : String(f[k]); });
+    LUU_TICK.forEach(function (k) { $(k).checked = !!f[k]; });
   }
 
   function dauVaoTuForm() {
@@ -127,14 +135,42 @@
     if (x.dv.gia_ban === undefined || x.dv.gia_von === undefined) {
       o.innerHTML = '<div class="loi">Nhập giá bán và giá vốn để tính.</div>'; return;
     }
-    var kq;
-    try { kq = mt.tinh(x.dv); } catch (e) {
+    var kq, kqd = null, von = null;
+    var ds = laDropship() ? docNhom(DS_SO, "ds_") : null;
+    if (ds && ds.loi.length) { o.innerHTML = '<div class="loi">Ô nhập chưa đúng số: ' + esc(ds.loi.join(", ")) + "</div>"; return; }
+    try {
+      if (ds) {
+        ds.v.loai_shop = $("ds_loai_shop").value;
+        var donNgay = ds.v.don_moi_ngay === undefined ? 5 : ds.v.don_moi_ngay;
+        delete ds.v.don_moi_ngay;
+        kqd = mt.dropship(x.dv, ds.v);
+        kq = kqd.don;
+        von = TC.vonUngTruoc({ don_moi_ngay: donNgay, chi_ra_moi_don: kqd.chi_ra_moi_don_dat,
+          tien_ve_moi_don: kqd.tien_ve_moi_don_dat, ngay_tre: kqd.ngay_tre, so_ngay: 56 });
+        von.don_moi_ngay = donNgay;
+      } else {
+        kq = mt.tinh(x.dv);
+      }
+    } catch (e) {
       o.innerHTML = '<div class="loi">Thiếu dữ liệu / chưa tính được: ' + esc(e.message) + "</div>"; return;
     }
-    tomTat(kq.ln, "ROAS hòa vốn " + so(kq.roas_hoa_von));
     var h = [];
     h.push('<div class="ghi">' + esc(kq.san) + " · " + esc(kq.nganh) + " · ngày " + esc(kq.ngay_ban) + "</div>");
-    h.push('<div>Lợi nhuận ròng / đơn</div><div class="so-lon ' + (kq.ln >= 0 ? "lai" : "lo") + '">' + vnd(kq.ln) + "</div>");
+    if (kqd) {
+      tomTat(kqd.ln_moi_don_dat, "Dropship · tiền về sau " + kqd.ngay_tre + " ngày");
+      h.push('<div>Dropship: lợi nhuận / đơn ĐẶT (sau hủy + hoàn)</div><div class="so-lon ' + (kqd.ln_moi_don_dat >= 0 ? "lai" : "lo") + '">' +
+        vnd(kqd.ln_moi_don_dat) + "</div>");
+      h.push('<div class="chi-so">' +
+        "<div><b>" + vnd(kqd.chi_ra_moi_don_dat) + "</b><span>Tiền chi ra / đơn lúc đặt (NCC + QC)</span></div>" +
+        "<div><b>" + vnd(kqd.tien_ve_moi_don_dat) + "</b><span>Tiền sàn trả về / đơn, sau " + kqd.ngay_tre + " ngày</span></div>" +
+        "<div><b>" + vnd(von.von_ung_truoc_can) + "</b><span>Vốn ứng trước cần (" + so(von.don_moi_ngay, 0) + " đơn/ngày, 8 tuần)</span></div>" +
+        "<div><b>" + vnd(kq.ln) + "</b><span>Lợi nhuận / đơn không hủy</span></div></div>");
+      h.push('<div class="ghi" style="margin-top:6px">Vốn: ' + esc(von.ghi_chu.split(". Số đầu vào")[0]) + ".</div>");
+    } else {
+      tomTat(kq.ln, "ROAS hòa vốn " + so(kq.roas_hoa_von));
+    }
+    if (kqd) h.push('<div style="margin-top:12px;font-weight:600">Đơn không bị hủy (đã tính tỷ lệ hoàn)</div>');
+    else h.push('<div>Lợi nhuận ròng / đơn</div><div class="so-lon ' + (kq.ln >= 0 ? "lai" : "lo") + '">' + vnd(kq.ln) + "</div>");
     h.push('<div class="chi-so">' +
       "<div><b>" + pct(kq.bien_rong) + "</b><span>Biên ròng (trên doanh thu đơn)</span></div>" +
       "<div><b>" + so(kq.roas_hoa_von) + "</b><span>ROAS hòa vốn (thực thấp hơn = QC lỗ)</span></div>" +
@@ -165,10 +201,49 @@
         '<tr class="tong"><td>Chênh lệch (nhập − affiliate)</td><td class="so">' + vnd(a.chenh_lech_nhap_truc_tiep_tru_affiliate) + "</td></tr>" +
         "</table></details>");
     }
-    h.push('<details style="margin-top:8px"><summary>Cảnh báo (' + kq.canh_bao.length + ")</summary><ul class=\"canh\">" +
-      kq.canh_bao.map(function (c) { return "<li>" + esc(c) + "</li>"; }).join("") + "</ul></details>");
+    var canh = kqd ? kqd.canh_bao.concat(kq.canh_bao) : kq.canh_bao;
+    h.push('<details style="margin-top:8px"><summary>Cảnh báo (' + canh.length + ")</summary><ul class=\"canh\">" +
+      canh.map(function (c) { return "<li>" + esc(c) + "</li>"; }).join("") + "</ul></details>");
     h.push('<div class="dam-bao">' + esc(kq.khong_dam_bao) + "</div>");
     o.innerHTML = h.join("");
+  }
+
+  function laDropship() { return $("la_dropship").checked; }
+
+  // đọc một nhóm ô số; tiền tố bỏ khỏi tên khóa (ds_phi_ncc → phi_ncc)
+  function docNhom(ids, tienTo) {
+    var v = {}, loi = [];
+    ids.forEach(function (k) {
+      var x = docSo($(k));
+      if (typeof x === "number" && isNaN(x)) loi.push($(k).labels[0].textContent);
+      else if (x !== undefined) v[k.slice(tienTo.length)] = x;
+    });
+    return { v: v, loi: loi };
+  }
+
+  function veAffiliate() {
+    var o = $("aff-ket-qua");
+    var n = docNhom(AFF_SO, "aff_");
+    if (n.loi.length) { o.innerHTML = '<div class="loi">Ô nhập chưa đúng số: ' + esc(n.loi.join(", ")) + "</div>"; return; }
+    if (n.v.gia_tri_don === undefined || n.v.ty_le_hoa_hong === undefined) {
+      o.innerHTML = '<div class="ghi">Nhập giá trị đơn và % hoa hồng để tính.</div>'; return;
+    }
+    n.v.san = $("aff_san").value;
+    n.v.nguong_tinh_tren = $("aff_nguong").value;
+    var k;
+    try { k = TC.thucNhanTuDon(n.v); } catch (e) {
+      o.innerHTML = '<div class="loi">Chưa tính được: ' + esc(e.message) + "</div>"; return;
+    }
+    o.innerHTML = '<div>Thực nhận cả kỳ</div><div class="so-lon ' + (k.thuc_nhan >= 0 ? "lai" : "lo") + '">' + vnd(k.thuc_nhan) + "</div>" +
+      "<table>" +
+      "<tr><td>Hoa hồng gốc (đơn không hủy / hoàn)</td><td class=\"so\">" + vnd(k.hoa_hong_goc) + "</td></tr>" +
+      "<tr><td>− Phí nền tảng</td><td class=\"so\">" + vnd(k.phi_nen_tang) + "</td></tr>" +
+      "<tr><td>− Thuế khấu trừ" + (k.co_khau_tru_thue ? "" : "<small>dưới ngưỡng — không bị trừ</small>") + "</td><td class=\"so\">" + vnd(k.thue_khau_tru) + "</td></tr>" +
+      "<tr><td>− Chi phí nội dung</td><td class=\"so\">" + vnd(k.chi_phi_noi_dung) + "</td></tr>" +
+      '<tr class="tong"><td>Thực nhận</td><td class="so">' + vnd(k.thuc_nhan) + "</td></tr></table>" +
+      '<details style="margin-top:8px"><summary>Cảnh báo (' + k.canh_bao.length + ')</summary><ul class="canh">' +
+      k.canh_bao.map(function (c) { return "<li>" + esc(c) + "</li>"; }).join("") + "</ul></details>" +
+      '<div class="dam-bao">' + esc(k.khong_dam_bao) + "</div>";
   }
 
   // ---- lưu tự động ----
@@ -177,7 +252,10 @@
     kho.form = layForm();
     if (!ghiKho(kho)) thongBao("Trình duyệt chặn lưu — nhớ tải bản sao lưu");
   }
-  function capNhat() { veKetQua(); luu(); }
+  function capNhat() {
+    $("o-dropship").classList.toggle("an", !laDropship());
+    veKetQua(); veAffiliate(); luu();
+  }
 
   // ---- sổ SKU ----
   function veSoSku() {
@@ -255,5 +333,7 @@
   document.querySelectorAll("input:not([type=file]):not(#ten_sku),select").forEach(function (el) {
     el.addEventListener(el.tagName === "SELECT" || el.type === "checkbox" || el.type === "date" ? "change" : "input", capNhat);
   });
+  $("o-dropship").classList.toggle("an", !laDropship());
   veKetQua();
+  veAffiliate();
 })();
