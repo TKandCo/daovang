@@ -326,6 +326,7 @@
 
     var tong = pySum(chiPhi.map(function (c) { return c.so_tien; }));
     var cm = rev - tong;
+    var phiSanAff = fPct / 100 * rev + tPct / 100 * rev + H + vTien + aTien;
 
     // ---- hoàn hàng ----
     var r = dv.ty_le_hoan / 100;
@@ -388,7 +389,9 @@
       ln: pyRound(ln, 2), bien_rong: pyRound(ln / rev, 6), roas_hoa_von: roas ? pyRound(roas, 4) : null,
       gia_hoa_von: giaHv, gia_hoa_von_truoc_qc: giaHvTqc,
       thue_tam_khau_tru: pyRound((1 - r) * kTien, 2), affiliate: aff, canh_bao: cb,
-      khong_dam_bao: DONG_KHONG_DAM_BAO
+      khong_dam_bao: DONG_KHONG_DAM_BAO,
+      ty_le_phi_san_aff_chua_thue: pyRound(phiSanAff / rev, 6),
+      ty_le_phi_gom_thue_khau_tru: pyRound((phiSanAff + kTien) / rev, 6)
     };
   };
 
@@ -431,9 +434,300 @@
     return String(v);
   }
 
+  // ---- tiện ích giống Python (chuỗi / ngày) ----
+  function pyStr(s) { // repr() của chuỗi
+    s = String(s);
+    var q = (s.indexOf("'") >= 0 && s.indexOf('"') < 0) ? '"' : "'";
+    var t = s.replace(/\\/g, "\\\\");
+    if (q === "'") t = t.replace(/'/g, "\\'");
+    return q + t + q;
+  }
+  function pyList(ds) { return "[" + ds.map(pyStr).join(", ") + "]"; }
+  function pyTuple(ds) { return "(" + ds.map(pyStr).join(", ") + ")"; }
+  function phay0(x) { // f"{x:,.0f}"
+    var v = pyRound(x, 0);
+    var am = v < 0 || Object.is(v, -0);
+    return (am ? "-" : "") + Math.abs(v).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+  function vndCham(x) { return phay0(x).replace(/,/g, ".") + " đ"; } // _vnd() của so_lai_lo
+  var NGAY_MS = 86400000;
+  function soNgay(iso) { // date.fromisoformat (YYYY-MM-DD hoặc YYYYMMDD) → số ngày; null nếu sai
+    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso) || /^(\d{4})(\d{2})(\d{2})$/.exec(iso);
+    if (!m) return null;
+    var y = +m[1], mo = +m[2], d = +m[3];
+    var t = Date.UTC(y, mo - 1, d);
+    var k = new Date(t);
+    if (y < 1 || k.getUTCFullYear() !== y || k.getUTCMonth() !== mo - 1 || k.getUTCDate() !== d) return null;
+    return Math.round(t / NGAY_MS);
+  }
+  function isoTuSo(n) { return new Date(n * NGAY_MS).toISOString().slice(0, 10); }
+
+  // ================= AFFILIATE (apps/finance/taichinh/affiliate.py) =================
+  var AFF = {
+    NGUON: "https://shopee.vn/blog/?p=190331 (bài Shopee 09/07/2026, qua p1-radar.md) [CAO]",
+    PHI_PCT: 0.98, PHI_TU: "2025-05-16", THUE_PCT: 10.0, THUE_TU: "2025-11-20", NGUONG: 250000
+  };
+
+  function hoaHongGocTuDon(giaTriDon, tyLe, soDon, tyLeHuy) {
+    if (laNone(soDon)) soDon = 1;
+    if (laNone(tyLeHuy)) tyLeHuy = 0.0;
+    if (giaTriDon < 0 || soDon < 0) throw ThieuDuLieu("giá trị đơn / số đơn không được âm");
+    var ks = [["tỷ lệ hoa hồng", tyLe], ["tỷ lệ hủy/hoàn", tyLeHuy]];
+    for (var i = 0; i < ks.length; i++) {
+      if (!(0 <= ks[i][1] && ks[i][1] <= 100)) throw ThieuDuLieu(ks[i][0] + " phải trong 0–100 (%), nhận " + soPy(ks[i][1]));
+    }
+    return giaTriDon * tyLe / 100 * soDon * (1 - tyLeHuy / 100);
+  }
+
+  function thucNhan(o) {
+    var hh = o.hoa_hong_goc, cnd = laNone(o.chi_phi_noi_dung) ? 0.0 : o.chi_phi_noi_dung;
+    var san = laNone(o.san) ? "shopee" : o.san, ngay = laNone(o.ngay) ? null : o.ngay;
+    var nguong = laNone(o.nguong_tinh_tren) ? "truoc_phi" : o.nguong_tinh_tren;
+    if (hh < 0 || cnd < 0) throw ThieuDuLieu("hoa hồng / chi phí nội dung không được âm");
+    if (nguong !== "truoc_phi" && nguong !== "sau_phi") throw ThieuDuLieu("nguong_tinh_tren phải là 'truoc_phi' hoặc 'sau_phi'");
+    var s = String(san).toLowerCase().replace(/ /g, "");
+    if (!(s.indexOf("shopee") === 0 || s.indexOf("tiktok") === 0)) throw ThieuDuLieu("sàn '" + san + "' chưa hỗ trợ");
+    var cb = [];
+    var phi = laNone(o.phi_nen_tang_pct) ? AFF.PHI_PCT : o.phi_nen_tang_pct;
+    var thue = laNone(o.thue_pct) ? AFF.THUE_PCT : o.thue_pct;
+    var tenSan;
+    if (s.indexOf("tiktok") === 0) {
+      tenSan = "TikTok Shop";
+      if (laNone(o.phi_nen_tang_pct) || laNone(o.thue_pct)) {
+        cb.push("TikTok Affiliate: phí nền tảng và thuế khấu trừ CHƯA XÁC MINH — đang dùng tạm luật Shopee " +
+          "(0,98% + 10% khi ≥ 250.000đ) cho thận trọng; nhập phi_nen_tang_pct / thue_pct khi có nguồn");
+      }
+    } else {
+      tenSan = "Shopee";
+    }
+    if (ngay !== null && (ngay < AFF.PHI_TU || ngay < AFF.THUE_TU)) {
+      cb.push("Ngày trước 16/05/2025 / 20/11/2025: mức cũ CHƯA XÁC MINH — công cụ vẫn áp mức hiện hành");
+    }
+    var phiTien = hh * phi / 100;
+    var sauPhi = hh - phiTien;
+    var soNguong = nguong === "truoc_phi" ? hh : sauPhi;
+    var coThue = soNguong >= AFF.NGUONG;
+    var thueTien = coThue ? sauPhi * thue / 100 : 0.0;
+    var sauThue = sauPhi - thueTien;
+    var tn = sauThue - cnd;
+    cb.push("Ngưỡng 250.000đ so với hoa hồng " + (nguong === "truoc_phi" ? "gốc (trước phí 0,98%)" : "sau phí 0,98%") +
+      " — nguồn không nói rõ cơ sở, CHƯA XÁC MINH");
+    if (coThue) {
+      cb.push("Thuế 10% bị khấu trừ TRÊN TOÀN KHOẢN (không chỉ phần vượt). Hộ kinh doanh có được khấu trừ theo " +
+        "mức khác / được hoàn hay không: CHƯA XÁC MINH — hỏi kế toán");
+    } else if (soNguong >= 0.9 * AFF.NGUONG) {
+      cb.push("Khoản sát ngưỡng 250.000đ: vượt ngưỡng thì bị khấu trừ 10% toàn khoản (thực nhận có thể GIẢM khi " +
+        "hoa hồng tăng nhẹ). Đây là thuế tạm khấu trừ, không phải lý do để chia nhỏ khoản");
+    }
+    if (tn < 0) cb.push("Chi phí nội dung lớn hơn hoa hồng sau thuế → LỖ");
+    cb.push("Nguồn phí / thuế affiliate: " + AFF.NGUON);
+    return {
+      san: tenSan, hoa_hong_goc: pyRound(hh, 2), phi_nen_tang: pyRound(phiTien, 2), sau_phi: pyRound(sauPhi, 2),
+      co_khau_tru_thue: coThue, thue_khau_tru: pyRound(thueTien, 2), sau_thue: pyRound(sauThue, 2),
+      chi_phi_noi_dung: pyRound(cnd, 2), thuc_nhan: pyRound(tn, 2), canh_bao: cb, khong_dam_bao: DONG_KHONG_DAM_BAO
+    };
+  }
+
+  function thucNhanTuDon(o) {
+    var goc0 = hoaHongGocTuDon(o.gia_tri_don, o.ty_le_hoa_hong, o.so_don, o.ty_le_huy_hoan);
+    var x = {};
+    Object.keys(o).forEach(function (k) { x[k] = o[k]; });
+    x.hoa_hong_goc = goc0;
+    var kq = thucNhan(x);
+    kq.canh_bao.unshift("Tỷ lệ hoa hồng, tỷ lệ hủy/hoàn, số đơn là GIẢ ĐỊNH; lịch thanh toán hoa hồng (gộp theo tháng?) " +
+      "CHƯA XÁC MINH — công cụ coi cả kỳ là MỘT khoản");
+    return kq;
+  }
+
+  // ================= DROPSHIP (apps/finance/taichinh/dropship.py) =================
+  var NGUON_TIEN_VE = "bao-cao/dot0/p4-tai-chinh.md §4 (Shopee Uni bài 234; TikTok knowledge_id=6091769578850065) [CAO]";
+  var CHU_KY = [ // (sàn, loại shop) → [ngày chờ sau giao thành công, ngày rút về ngân hàng]
+    ["shopee", "thuong", 4, 1], ["shopee", "moi", 4, 1], ["shopee", "rui_ro", 15, 1],
+    ["tiktok", "moi", 8, 1], ["tiktok", "thuong", 3, 1], ["tiktok", "mall", 1, 1], ["tiktok", "rui_ro", 15, 1]
+  ];
+  var TRUONG_DROPSHIP = ["phi_ncc", "ty_le_huy", "chi_phi_moi_don_huy", "ngay_giao", "loai_shop"];
+
+  function chuKyTienVe(san, loaiShop) {
+    if (laNone(loaiShop)) loaiShop = "moi";
+    var ma = chuanSan(san);
+    for (var i = 0; i < CHU_KY.length; i++) if (CHU_KY[i][0] === ma && CHU_KY[i][1] === loaiShop) return [CHU_KY[i][2], CHU_KY[i][3]];
+    var ds = CHU_KY.map(function (c) { return [c[0], c[1]]; }).sort(function (a, b) {
+      return a[0] !== b[0] ? (a[0] < b[0] ? -1 : 1) : (a[1] < b[1] ? -1 : a[1] > b[1] ? 1 : 0);
+    });
+    throw ThieuDuLieu("chưa có chu kỳ tiền về cho " + pyTuple([ma, loaiShop]) + "; chọn trong [" + ds.map(pyTuple).join(", ") + "]");
+  }
+
+  MayTinh.prototype.dropship = function (vao, o, timHoaVon) {
+    if (timHoaVon === undefined) timHoaVon = true;
+    o = o || {};
+    var dv = dauVao(vao);
+    var phiNcc = laNone(o.phi_ncc) ? 0.0 : o.phi_ncc, tyLeHuy = laNone(o.ty_le_huy) ? 0.0 : o.ty_le_huy;
+    var ngayGiao = laNone(o.ngay_giao) ? 3 : o.ngay_giao, loaiShop = laNone(o.loai_shop) ? "moi" : o.loai_shop;
+    if (phiNcc < 0 || ngayGiao < 0) throw ThieuDuLieu("phí NCC / số ngày giao không được âm");
+    if (!(0 <= tyLeHuy && tyLeHuy < 100)) throw ThieuDuLieu("tỷ lệ hủy phải trong 0–<100 (%), nhận " + soPy(tyLeHuy));
+    var cHuy = laNone(o.chi_phi_moi_don_huy) ? phiNcc : o.chi_phi_moi_don_huy;
+    if (cHuy < 0) throw ThieuDuLieu("chi phí đơn hủy không được âm");
+    var x = {};
+    Object.keys(dv).forEach(function (k) { x[k] = dv[k]; });
+    x.dong_goi = dv.dong_goi + phiNcc;
+    var kq = this.tinh(x, timHoaVon);
+    var h = tyLeHuy / 100;
+    var r = dv.ty_le_hoan / 100;
+    var lnDat = (1 - h) * kq.ln - h * cHuy;
+    var lnTqcDat = (1 - h) * kq.ln_truoc_qc - h * cHuy;
+    var ck = chuKyTienVe(dv.san, loaiShop);
+    var truKhiHoan = (kq.chi_phi_moi_don_hoan - (dv.dong_goi + phiNcc + dv.ship_shop_chiu) -
+      dv.ty_le_hong_hang_hoan / 100 * dv.gia_von);
+    var ngoaiSan = ["Giá vốn", "Đóng gói", "Ship shop chịu"];
+    var tienSanTra = kq.rev - pySum(kq.chi_phi.filter(function (c) { return ngoaiSan.indexOf(c.ten) < 0; })
+      .map(function (c) { return c.so_tien; }));
+    var tienVe = (1 - h) * ((1 - r) * tienSanTra - r * truKhiHoan);
+    var chiRa = (1 - h) * (dv.gia_von + phiNcc + dv.dong_goi + dv.ship_shop_chiu + kq.quang_cao) + h * cHuy;
+    var cb = ["Dropship: giá NCC, phí NCC " + phay0(phiNcc) + "đ, tỷ lệ hủy " + fmtG(tyLeHuy) + "%, chi phí mỗi đơn hủy " +
+      phay0(cHuy) + "đ, giao " + ngayGiao + " ngày là GIẢ ĐỊNH",
+      "Tiền về: chờ " + ck[0] + " ngày sau giao + rút " + ck[1] + " ngày (shop '" + loaiShop + "') — " + NGUON_TIEN_VE,
+      "Hàng bị trả về địa chỉ shop (không về NCC) — NCC có nhận lại / hoàn tiền hàng trả không: CHƯA XÁC MINH, " +
+      "tùy hợp đồng NCC",
+      "Quảng cáo tính trên đơn không hủy; tiền quảng cáo nạp trước được coi là chi lúc đặt đơn",
+      "Tiền mặt ≠ lãi: hàng hoàn còn bán được nằm thành tồn kho (đã trả NCC, chưa thu lại tiền)"];
+    if (lnDat < 0) cb.push("LỖ mỗi đơn đặt sau hủy / hoàn");
+    return {
+      don: kq, gia_ncc: dv.gia_von, phi_ncc: phiNcc, ty_le_huy: tyLeHuy, chi_phi_moi_don_huy: cHuy,
+      ln_moi_don_dat: pyRound(lnDat, 2), ln_truoc_qc_moi_don_dat: pyRound(lnTqcDat, 2),
+      chi_ra_moi_don_dat: pyRound(chiRa, 2), tien_ve_moi_don_dat: pyRound(tienVe, 2),
+      ngay_cho: ck[0], ngay_rut: ck[1], ngay_giao: ngayGiao, ngay_tre: ngayGiao + ck[0] + ck[1],
+      canh_bao: cb, khong_dam_bao: DONG_KHONG_DAM_BAO
+    };
+  };
+
+  function vonUngTruoc(o) {
+    var dmn = o.don_moi_ngay, cr = o.chi_ra_moi_don, tv = o.tien_ve_moi_don, tre = o.ngay_tre;
+    var n = laNone(o.so_ngay) ? 56 : o.so_ngay;
+    if (dmn < 0 || cr < 0 || tre < 0 || n < 1) throw ThieuDuLieu("đầu vào vốn ứng trước không hợp lệ");
+    var soDu = 0.0, thapNhat = 0.0, ngayThap = null, ngayHoan = null;
+    for (var t = 0; t < n; t++) {
+      soDu -= dmn * cr;
+      if (t >= tre) soDu += dmn * tv;
+      if (soDu < thapNhat - 1e-9) { thapNhat = soDu; ngayThap = t; }
+      if (ngayHoan === null && t > 0 && soDu >= 0 && thapNhat < 0) ngayHoan = t;
+    }
+    return {
+      von_ung_truoc_can: pyRound(-thapNhat, 2), ngay_am_sau_nhat: ngayThap, ngay_so_du_cong_don_ve_0: ngayHoan,
+      so_du_cuoi_ky: pyRound(soDu, 2), so_ngay_mo_phong: n,
+      ghi_chu: "GIẢ ĐỊNH số đơn đều mỗi ngày; chưa tính chi phí cố định (công cụ, hàng mẫu). " + DONG_KHONG_DAM_BAO
+    };
+  }
+
+  // ================= SỔ LÃI LỖ (apps/finance/taichinh/so_lai_lo.py) =================
+  var COT_SO = ["ngay", "thu_chi", "loai", "mo_hinh", "kenh", "so_tien_vnd", "phan_bo_tu", "phan_bo_den", "mo_ta", "nguon"];
+  var LOAI_THU = ["doanh_thu_don", "hoa_hong_affiliate", "hoan_thue", "thu_khac"];
+  var LOAI_CHI = ["gia_von_ncc", "phi_ncc", "phi_san", "thue_khau_tru", "ship", "hoan_tien_khach", "chi_phi_huy_don",
+    "quang_cao", "cong_cu", "hang_mau", "noi_dung", "ke_toan_phap_ly", "chi_khac"];
+  var MO_HINH = ["affiliate", "dropship", "chung"];
+  var KENH = ["shopee", "tiktok", "chung", "khac"];
+  function xep(ds) { return ds.slice().sort(); }
+
+  function docNgaySo(s, ten, vt) {
+    var n = soNgay(s.trim());
+    if (n === null) throw ThieuDuLieu(vt + ": " + ten + " '" + s + "' không đúng dạng YYYY-MM-DD");
+    return n;
+  }
+
+  function kiemDong(row, vt) {
+    if (laNone(vt)) vt = "dòng";
+    var g = {};
+    COT_SO.forEach(function (k) { g[k] = String(laNone(row[k]) ? "" : row[k]).trim(); });
+    var tc = g.thu_chi.toLowerCase();
+    if (tc !== "thu" && tc !== "chi") throw ThieuDuLieu(vt + ": thu_chi phải là 'thu' hoặc 'chi', nhận '" + g.thu_chi + "'");
+    var loai = g.loai.toLowerCase();
+    var hopLe = tc === "thu" ? LOAI_THU : LOAI_CHI;
+    if (hopLe.indexOf(loai) < 0) throw ThieuDuLieu(vt + ": loai '" + g.loai + "' không hợp lệ cho '" + tc + "'; chọn trong " + pyList(xep(hopLe)));
+    var mh = g.mo_hinh.toLowerCase();
+    if (MO_HINH.indexOf(mh) < 0) throw ThieuDuLieu(vt + ": mo_hinh phải trong " + pyList(xep(MO_HINH)));
+    var kenh = g.kenh.toLowerCase() || "chung";
+    if (KENH.indexOf(kenh) < 0) throw ThieuDuLieu(vt + ": kenh phải trong " + pyList(xep(KENH)));
+    var st = g.so_tien_vnd.replace(/[.,_]/g, "");
+    if (!/^\d+$/.test(st) || Number(st) <= 0) throw ThieuDuLieu(vt + ": so_tien_vnd phải là số nguyên dương (VND), nhận '" + g.so_tien_vnd + "'");
+    var tu = g.phan_bo_tu ? docNgaySo(g.phan_bo_tu, "phan_bo_tu", vt) : null;
+    var den = g.phan_bo_den ? docNgaySo(g.phan_bo_den, "phan_bo_den", vt) : null;
+    if ((tu === null) !== (den === null)) throw ThieuDuLieu(vt + ": cần cả phan_bo_tu và phan_bo_den (hoặc bỏ trống cả hai)");
+    if (tu !== null && den < tu) throw ThieuDuLieu(vt + ": phan_bo_den trước phan_bo_tu");
+    return { ngay: docNgaySo(g.ngay, "ngay", vt), thu_chi: tc, loai: loai, mo_hinh: mh, kenh: kenh, so_tien_vnd: Number(st),
+      phan_bo_tu: tu, phan_bo_den: den, mo_ta: g.mo_ta, nguon: g.nguon };
+  }
+
+  function phanTrong(d, tu, den) {
+    var a = d.phan_bo_tu !== null ? d.phan_bo_tu : d.ngay, b = d.phan_bo_tu !== null ? d.phan_bo_den : d.ngay;
+    var so = (b - a) + 1;
+    var giao = (Math.min(b, den) - Math.max(a, tu)) + 1;
+    if (giao <= 0) return 0.0;
+    return (d.thu_chi === "thu" ? 1 : -1) * d.so_tien_vnd * giao / so;
+  }
+
+  function tongHop(dong, tu, den) {
+    var thu = 0.0, chi = 0.0, theoMh = {}, theoLoai = {};
+    xep(MO_HINH).forEach(function (m) { theoMh[m] = 0.0; });
+    dong.forEach(function (d) {
+      var v = phanTrong(d, tu, den);
+      if (!v) return;
+      if (v > 0) thu += v; else chi += -v;
+      theoMh[d.mo_hinh] += v;
+      theoLoai[d.loai] = (theoLoai[d.loai] || 0.0) + v;
+    });
+    var mh = {}, lo = {};
+    Object.keys(theoMh).forEach(function (k) { mh[k] = pyRound(theoMh[k], 0); });
+    Object.keys(theoLoai).sort().forEach(function (k) { lo[k] = pyRound(theoLoai[k], 0); });
+    return { tu: isoTuSo(tu), den: isoTuSo(den), thu: pyRound(thu, 0), chi: pyRound(chi, 0), lai_rong: pyRound(thu - chi, 0),
+      theo_mo_hinh: mh, theo_loai: lo };
+  }
+
+  // o = {dong: [dòng thô theo cột sổ], ngay_cuoi: "YYYY-MM-DD", so_ngay: 28}
+  function kiemCongDot1(o) {
+    var dong = (o.dong || []).map(function (r) { return kiemDong(r); });
+    var cuoi = soNgay(o.ngay_cuoi);
+    if (cuoi === null) { var e = new Error("Invalid isoformat string: " + pyStr(o.ngay_cuoi)); e.name = "ValueError"; throw e; }
+    var n = laNone(o.so_ngay) ? 28 : o.so_ngay;
+    if (!dong.length) throw ThieuDuLieu("sổ trống");
+    var tu = cuoi - (n - 1);
+    var dau = Math.min.apply(null, dong.map(function (d) { return d.phan_bo_tu !== null ? d.phan_bo_tu : d.ngay; }));
+    var cuaSo = tongHop(dong, tu, cuoi);
+    var tuDau = tongHop(dong, Math.min(dau, tu), cuoi);
+    var cb = ["Cổng đo trên cửa sổ 4 tuần cuối; cũng in lãi cộng dồn TỪ ĐẦU dự án để chủ dự án thấy cả hai",
+      "Thuế khấu trừ được tính là CHI (thận trọng) dù có thể được hoàn khi doanh thu năm ≤ 1 tỷ"];
+    dong.forEach(function (d) {
+      if (d.thu_chi === "chi" && d.phan_bo_tu === null && d.ngay < tu &&
+          ["cong_cu", "hang_mau", "noi_dung", "ke_toan_phap_ly"].indexOf(d.loai) >= 0 && d.so_tien_vnd >= 1000000) {
+        cb.push("Khoản " + d.loai + " " + vndCham(d.so_tien_vnd) + " ngày " + isoTuSo(d.ngay) + " trước cửa sổ và KHÔNG phân bổ — nếu là gói dùng " +
+          "trong cửa sổ, hãy điền phan_bo_tu / phan_bo_den để cổng không bị 'dễ' giả");
+      }
+    });
+    var muon = dong.filter(function (d) { return d.ngay > cuoi; });
+    if (muon.length) cb.push(muon.length + " dòng có ngày sau " + isoTuSo(cuoi) + " — không tính");
+    return { cua_so_4_tuan: cuaSo, tu_dau_du_an: tuDau, dat_cong_dot1: cuaSo.lai_rong >= 0, canh_bao: cb,
+      khong_dam_bao: DONG_KHONG_DAM_BAO };
+  }
+
+  // ---- chạy một ví dụ theo loại (dùng cho kiểm khớp và giao diện) ----
+  function chayViDu(mt, loai, dv) {
+    loai = loai || "don";
+    if (loai === "don") return mt.tinh(dv);
+    if (loai === "dropship") {
+      var don = {}, ds = {};
+      Object.keys(dv).forEach(function (k) { (TRUONG_DROPSHIP.indexOf(k) >= 0 ? ds : don)[k] = dv[k]; });
+      return mt.dropship(don, ds);
+    }
+    if (loai === "affiliate") return thucNhan(dv);
+    if (loai === "affiliate_tu_don") return thucNhanTuDon(dv);
+    if (loai === "von_ung_truoc") return vonUngTruoc(dv);
+    if (loai === "so_lai_lo") return kiemCongDot1(dv);
+    throw new Error("loại ví dụ lạ: " + loai);
+  }
+
   goc.TaiChinh = {
     BangPhi: BangPhi, MayTinh: MayTinh, ThieuDuLieu: ThieuDuLieu, SAN: SAN, chuanSan: chuanSan, boDau: boDau,
     pyRound: pyRound, fmtG: fmtG, pySum: pySum, DONG_KHONG_DAM_BAO: DONG_KHONG_DAM_BAO, MAC_DINH: MAC_DINH,
-    homNay: homNay
+    homNay: homNay, thucNhan: thucNhan, thucNhanTuDon: thucNhanTuDon, hoaHongGocTuDon: hoaHongGocTuDon,
+    chuKyTienVe: chuKyTienVe, CHU_KY: CHU_KY, vonUngTruoc: vonUngTruoc, kiemDong: kiemDong, kiemCongDot1: kiemCongDot1,
+    chayViDu: chayViDu, phay0: phay0
   };
 })(typeof globalThis !== "undefined" ? globalThis : this);
