@@ -34,6 +34,8 @@ def in_ket_qua(kq: KetQua) -> str:
         tl = f" ({_so(c.ty_le)}%)" if c.ty_le is not None else ""
         ng = f"  [nguồn: {c.nguon} · {c.do_tin_cay} · {c.hieu_luc}]" if c.do_tin_cay else ""
         L.append(f"  - {c.ten}{tl}: {_vnd(c.so_tien)}{ng}")
+    L.append(f"Tổng phí sàn + affiliate / doanh thu đơn (CHƯA gồm thuế khấu trừ): {_pct(kq.ty_le_phi_san_aff_chua_thue)}"
+             f" · GỒM thuế khấu trừ: {_pct(kq.ty_le_phi_gom_thue_khau_tru)}")
     L.append(f"Lợi nhuận đóng góp đơn thành công (CM): {_vnd(kq.cm)}")
     L.append(f"Chi phí mỗi đơn bị hoàn: {_vnd(kq.chi_phi_moi_don_hoan)}")
     L.append(f"Lợi nhuận trước quảng cáo (đã tính tỷ lệ hoàn): {_vnd(kq.ln_truoc_qc)}")

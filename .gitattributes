@@ -1,0 +1,7 @@
+# Mọi tệp chữ lưu và checkout với xuống dòng LF (kể cả trên Windows) — tránh lệch "app khớp nguồn" do CRLF.
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.ico binary
+# Ngoại lệ: CSV của P1 đang lưu CRLF trong repo — giữ nguyên (P1 tự chuẩn hóa nếu muốn, tránh xung đột nhánh P1)
+apps/radar/**/*.csv -text
