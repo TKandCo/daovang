@@ -35,6 +35,13 @@ Phòng mở THEO ĐỢT (`quy-trinh/lich-mo-phong.md`); tối đa 3 phòng xây 
     KTS trưởng audit + DUYỆT từng nhánh. Tổng quản **gom các nhánh đã duyệt vào MỘT nhánh chuyến** `chuyen-<YYYY-MM-DD>` từ `origin/main`,
     chạy lại toàn bộ kiểm thử trên nhánh chuyến, đẩy lên GitHub **một lần**, rồi báo chủ dự án: danh sách nhánh trong chuyến, đã kiểm gì /
     chưa kiểm gì, link tạo PR → CHỦ DỰ ÁN tạo PR và gộp. Nhánh chưa duyệt / xung đột / kiểm thử hỏng → để chuyến sau, báo phòng đó.
+13. **BÁO XONG cho Tổng quản + KTS** (chủ dự án quyết định 13/11/2026). Phiên cloud KHÔNG nhắn được cho phiên điều phối, nên mỗi khi xong
+    một việc (kể cả việc sửa theo audit), phòng PHẢI: (a) ghi / cập nhật tệp `bao-cao/trang-thai/<pN>.md` trên CHÍNH nhánh của mình —
+    trạng thái `XONG` / `ĐANG LÀM` / `KẸT`, mã việc, nhánh, commit cuối, kiểm thử đã chạy + kết quả, chưa kiểm gì, cần ai quyết;
+    (b) commit cuối có tiền tố `[XONG] <mã việc>`; (c) đẩy nhánh; (d) dòng cuối trả lời chủ dự án:
+    "Báo Tổng quản + KTS: <phòng> XONG <mã việc>, nhánh <tên>, commit <mã>". Chưa có 4 bước này thì việc coi như CHƯA XONG.
+    Tổng quản: mỗi lượt chủ dự án nhắn và mỗi lần "họp" → `git fetch`, tìm commit `[XONG]` + tệp trạng thái mới trên mọi nhánh `phong/*`,
+    báo chủ dự án và chuyển KTS audit. KTS duyệt → Tổng quản gom chuyến → chủ dự án tạo PR và gộp. Không phòng nào tự tạo PR.
 
 ## Audit
 KTS trưởng audit TRỰC TIẾP: chạy lại kết quả, đọc mã / dữ liệu thô, đối chiếu mẫu ngẫu nhiên (≥ 20%/tuần), không chỉ đọc báo cáo.
